@@ -1,11 +1,10 @@
 # General notes:
 
-* 3.11 environment is not named here
-* 3.10 seems to work with pygraphviz
+* 3.10.6 seems to work with pygraphviz
   * Graphviz must be added to the path
-  * Working commands:
-    * This was also missing after install IPython and DoWhy: `pip install openpyxl`
-    * `python -m pip install --use-pep517 --config-setting="--global-option=build_ext" --config-setting="--global-option=-IC:\Program Files\Graphviz\include" --config-setting="--global-option=-LC:\Program Files\Graphviz\lib" pygraphviz -vvv`
+  * This was also missing after install IPython and DoWhy: `pip install openpyxl`
+  * On my work machine: `python -m pip install --use-pep517 --config-setting="--global-option=build_ext" --config-setting="--global-option=-IC:\Program Files\Graphviz\include" --config-setting="--global-option=-LC:\Program Files\Graphviz\lib" pygraphviz -vvv`
+  * On my school machine: `pip install pygraphviz-1.9-cp310-cp310-win_amd64.whl`
 
 # Working environment:
 
@@ -17,7 +16,7 @@
 
 # Programming:
 
-## Sample causal inference computation
+## Sample causal inference computation (skeleton):
 
 ```
 from dowhy import CausalModel
