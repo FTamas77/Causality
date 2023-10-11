@@ -1,14 +1,19 @@
 # General notes:
 
 * 3.11 environment is not named here
+* 3.10 seems to work with pygraphviz
+  * Graphviz must be added to the path
+  * Working commands:
+    * This was also missing after install IPython and DoWhy: `pip install openpyxl`
+    * `python -m pip install --use-pep517 --config-setting="--global-option=build_ext" --config-setting="--global-option=-IC:\Program Files\Graphviz\include" --config-setting="--global-option=-LC:\Program Files\Graphviz\lib" pygraphviz -vvv`
 
 # Working environment:
 
-* **Create an environment to a specific python version:** virtualenv causalityEnv -p python3.11
-* **Activate the created environment:** .\causalityEnv\Scripts\activate
-* **Get the package list:** python -m pip freeze > requirements.txt
-* **Install the package list:** python -m pip install -r requirements.txt
-* **Deactivate the environment:** deactivate
+* **Create an environment to a specific python version:** `virtualenv causalityEnv -p python3.11`
+* **Activate the created environment:** `.\causalityEnv\Scripts\activate`
+* **Get the package list:** `python -m pip freeze > requirements.txt`
+* **Install the package list:** `python -m pip install -r requirements.txt`
+* **Deactivate the environment:** `deactivate`
 
 # Programming:
 

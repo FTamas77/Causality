@@ -1,4 +1,5 @@
 from IPython.display import Image, display
+
 from dowhy import CausalModel
 import dowhy
 
@@ -6,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 import graphviz
-# import pygraphviz
+import pygraphviz
 
 data = pd.read_excel('KV-41762_202301_test.xlsx', skiprows=2)
 print(data)
@@ -32,9 +33,9 @@ print(model.view_model())
 display(Image(filename="causal_model.png"))
 
 
-estimand_1 = model_1.identify_effect()
+estimand_1 = model.identify_effect()
 print(estimand_1)
 
-estimate_1 = model_1.estimate_effect(
+estimate_1 = model.estimate_effect(
     identified_estimand=estimand_1,
     method_name='backdoor.linear_regression')
