@@ -1,6 +1,6 @@
 # General notes:
 
-* There are two environment, 3.11 is preferred
+* 3.11 environment is not named here
 
 # Working environment:
 
