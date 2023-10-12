@@ -1,12 +1,12 @@
-# General notes:
+# Dev environment:
 
 * 3.10.6 seems to work with pygraphviz
   * Graphviz must be added to the path
   * This was also missing after install IPython and DoWhy: `pip install openpyxl`
   * On my work machine: `python -m pip install --use-pep517 --config-setting="--global-option=build_ext" --config-setting="--global-option=-IC:\Program Files\Graphviz\include" --config-setting="--global-option=-LC:\Program Files\Graphviz\lib" pygraphviz -vvv`
-  * On my school machine: `pip install pygraphviz-1.9-cp310-cp310-win_amd64.whl`
+  * On my school machine: `pip install pygraphviz-1.9-cp310-cp310-win_amd64.whl` and this was downloaded from here: `https://www.lfd.uci.edu/~gohlke/pythonlibs/#pygraphviz`
 
-# Working environment:
+# Useful comments:
 
 * **Create an environment to a specific python version:** `virtualenv causalityEnv -p python3.11`
 * **Activate the created environment:** `.\causalityEnv\Scripts\activate`
@@ -15,7 +15,6 @@
 * **Deactivate the environment:** `deactivate`
 
 # Programming:
-
 ## Sample causal inference computation (skeleton):
 
 ```
