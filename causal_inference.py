@@ -5,7 +5,6 @@ from IPython.display import Image, display
 
 from dowhy import CausalModel
 import dowhy.plotter
-
 import dowhy
 
 import numpy as np
@@ -14,46 +13,36 @@ import pandas as pd
 import graphviz
 import pygraphviz
 
-from utils import scatter_plot_with_correlation_line, remove_others
+from utils import scatter_plot_with_correlation_line, read_input_data
 
 import matplotlib
 matplotlib.use('TKAgg')
 
-#
-# Create the graph
-# In the first step, the model is created by hand
-#
-df = pd.read_excel('KV-41762_202301_test.xlsx', skiprows=2)
+#######################
+### Read input data ###
+#######################
 
+keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
+             "hengerűrtartalom", "Elhaladási zaj dBA"]
 
-df.columns = df.columns.str.replace(r'[', '')
-df.columns = df.columns.str.replace(r']', '')
-df.columns = df.columns.str.replace(r'.', '')
-df.columns = df.columns.str.replace(r'/', '')
-df.columns = df.columns.str.replace(r'(', '')
-df.columns = df.columns.str.replace(r')', '')
-df.columns = df.columns.str.replace(r'-', '')
-# df.columns = df.columns.str.replace(r' ', '')
-df.columns = df.columns.str.replace(r'%', '')
+list_of_files = ['KV-41762_202301_test.xlsx']
 
+df = read_input_data(keep_cols, list_of_files)
 
-col_list = ["teljesítmény", "CO2 kibocsátás gkm V7",
-            "hengerűrtartalom", "Elhaladási zaj dBA", ]
-df = df[col_list]
-df = df.dropna()  # remove nans
+print("\nSize of the input data: " +
+      str(df.shape[0]) + "x" + str(df.shape[1]) + "\n\nAnd the input data:\n")
 print(df)
-print(df.size)
 
-
-# print the selected values to see the correlation between them
+# correlation between the treatment and the outcome
 scatter_plot_with_correlation_line(
     df['teljesítmény'], df["CO2 kibocsátás gkm V7"], 'scatter_plot.png')
 
-# print(df)
-# print(list(df.columns.values))
+########################
+### Create the model ###
+########################
 
 # structural causal model (SCM)
-# therefore NetworkX is used
+# NetworkX is used
 graph = """graph    [
                                     directed 1    
                                     node [id "hengerűrtartalom" label "hengerűrtartalom"]
@@ -67,14 +56,15 @@ graph = """graph    [
                                     edge [source "Elhaladási zaj dBA" target "CO2 kibocsátás gkm V7"]
                     ]"""
 
+# Note:
 # something similar called inside of CausalModel(...)
 # nx.read_gml("KV-41762_202301_test.xlsx")
 
-#
-# Create the model
-#
+########################
+### Create the model ###
+########################
+
 # API: https://www.pywhy.org/dowhy/v0.10.1/dowhy.html#dowhy.causal_model.CausalModel
-#
 model = CausalModel(
     data=df,
     treatment='teljesítmény',
@@ -82,25 +72,23 @@ model = CausalModel(
     graph=graph
 )
 
-# print(model.view_model())
-
 model.view_model(layout="dot")
 display(Image(filename="causal_model.png"))
 
 
-#
-# Identify effect
-#
+#######################
+### Identify effect ###
+#######################
+
 estimand = model.identify_effect(proceed_when_unidentifiable=True)
 print(estimand)
 
+#######################
+### Estimate effect ###
+#######################
 
-#
-# Estimate effect
-#
 # Create a namedtuple to store the name of the estimator and the parameters passed
 # https://github.com/py-why/dowhy/blob/main/docs/source/example_notebooks/dowhy_ranking_methods.ipynb
-#
 estimator_list = [
     "backdoor.linear_regression",
     # "backdoor.propensity_score_stratification",
@@ -116,22 +104,21 @@ estimator_list = [
     # "backdoor.causalml.inference.meta.BaseXRegressor"
 ]
 
-
 estimate = model.estimate_effect(
     identified_estimand=estimand,
     method_name='backdoor.linear_regression')
 
 
 # Plot Slope of line between action and outcome = causal effect
-# dowhy.plotter.plot_causal_effect(
-# estimate, df["teljesítmény"], df["CO2 kibocsátás gkm V7"])
+dowhy.plotter.plot_causal_effect(
+    estimate, df["teljesítmény"], df["CO2 kibocsátás gkm V7"])
 
 print(estimate)
 print("Causal Estimate is " + str(estimate.value))
 
-#
-# Test
-#
+##################
+### Refutation ###
+##################
 
 res_random = model.refute_estimate(
     estimand, estimate, method_name="random_common_cause")

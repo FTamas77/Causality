@@ -1,15 +1,30 @@
 import matplotlib.pyplot as plt
+
 import pandas as pd
 import numpy as np
 
-from pandas import DataFrame
-from typing import Set, Any
 
+def read_input_data(keep_cols, list_of_files):
+    """ Read the input data from excel file and returns a pandas dataframe. """
 
-def remove_others(df: DataFrame, columns: Set[Any]):
-    cols_total: Set[Any] = set(df.columns)
-    diff: Set[Any] = cols_total - columns
-    df.drop(diff, axis=1, inplace=True)
+    df = pd.read_excel(list_of_files[0], skiprows=2)
+
+    df.columns = df.columns.str.replace(r'[', '')
+    df.columns = df.columns.str.replace(r']', '')
+    df.columns = df.columns.str.replace(r'.', '')
+    df.columns = df.columns.str.replace(r'/', '')
+    df.columns = df.columns.str.replace(r'(', '')
+    df.columns = df.columns.str.replace(r')', '')
+    df.columns = df.columns.str.replace(r'-', '')
+    # df.columns = df.columns.str.replace(r' ', '')
+    df.columns = df.columns.str.replace(r'%', '')
+
+    # remove not used columns
+    df = df[keep_cols]
+
+    # remove nan lines
+    df = df.dropna()
+    return df
 
 
 def scatter_plot_with_correlation_line(x, y, graph_filepath):
@@ -23,6 +38,7 @@ def scatter_plot_with_correlation_line(x, y, graph_filepath):
     m, b = np.polyfit(x, y, 1)
     X_plot = np.linspace(axes.get_xlim()[0], axes.get_xlim()[1], 100)
 
+    plt.title("Input data")
     plt.xlabel('teljesítmény')
     plt.ylabel("CO2 kibocsátás gkm V7")
 
