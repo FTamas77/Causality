@@ -23,19 +23,24 @@ matplotlib.use('TKAgg')
 #######################
 
 keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
-             "hengerűrtartalom", "Elhaladási zaj dBA"]
+             "hengerűrtartalom", "Elhaladási zaj dBA", "motor működési mód"]
 
 list_of_files = ['KV-41762_202301_test.xlsx']
 
 df = read_input_data(keep_cols, list_of_files)
 
+
+patternDel = "Diesel|Otto"
+filter = df['motor működési mód'].str.contains(patternDel) == False
+df = df[~filter]
+
+
+df['motor működési mód'].replace("Diesel", 0, inplace=True)
+df['motor működési mód'].replace("Otto", 1, inplace=True)
+
 print("\nSize of the input data: " +
       str(df.shape[0]) + "x" + str(df.shape[1]) + "\n\nAnd the input data:\n")
 print(df)
-
-# correlation between the treatment and the outcome
-scatter_plot_with_correlation_line(
-    df['teljesítmény'], df["CO2 kibocsátás gkm V7"], 'scatter_plot.png')
 
 ########################
 ### Create the model ###
@@ -49,11 +54,13 @@ graph = """graph    [
                                     node [id "teljesítmény" label "teljesítmény"]
                                     node [id "Elhaladási zaj dBA" label "Elhaladási zaj dBA"]
                                     node [id "CO2 kibocsátás gkm V7" label "CO2 kibocsátás gkm V7"]
+                                    node [id "motor működési mód" label "motor működési mód"]
                                     edge [source "hengerűrtartalom" target "teljesítmény"]
                                     edge [source "hengerűrtartalom" target "CO2 kibocsátás gkm V7"]
                                     edge [source "teljesítmény" target "Elhaladási zaj dBA"]
                                     edge [source "teljesítmény" target "CO2 kibocsátás gkm V7"]
                                     edge [source "Elhaladási zaj dBA" target "CO2 kibocsátás gkm V7"]
+                                    edge [source "motor működési mód" target "CO2 kibocsátás gkm V7"]
                     ]"""
 
 # Note:
@@ -67,7 +74,7 @@ graph = """graph    [
 # API: https://www.pywhy.org/dowhy/v0.10.1/dowhy.html#dowhy.causal_model.CausalModel
 model = CausalModel(
     data=df,
-    treatment='teljesítmény',
+    treatment='motor működési mód',
     outcome='CO2 kibocsátás gkm V7',
     graph=graph
 )
@@ -89,17 +96,16 @@ print(estimand.backdoor_variables)
 #######################
 ### Estimate effect ###
 #######################
-
-# Works: backdoor.linear_regression
-estimate = model.estimate_effect(
-    identified_estimand=estimand,
-    method_name='backdoor.linear_regression',
-    method_params=None)
+causal_estimate_strat = model.estimate_effect(estimand,
+                                              method_name="backdoor.propensity_score_matching",
+                                              target_units="att")
+print(causal_estimate_strat)
+print("Causal Estimate is " + str(causal_estimate_strat.value))
 
 
 # Plot Slope of line between action and outcome = causal effect
 dowhy.plotter.plot_causal_effect(
-    estimate, df["teljesítmény"], df["CO2 kibocsátás gkm V7"])
+    estimate, df["motor működési mód"], df["CO2 kibocsátás gkm V7"])
 
 
 print("**** estimate:\n")
