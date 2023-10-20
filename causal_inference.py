@@ -81,38 +81,26 @@ display(Image(filename="causal_model.png"))
 #######################
 
 estimand = model.identify_effect(proceed_when_unidentifiable=True)
+print("**** Estimand:\n")
 print(estimand)
 
 #######################
 ### Estimate effect ###
 #######################
 
-# Create a namedtuple to store the name of the estimator and the parameters passed
-# https://github.com/py-why/dowhy/blob/main/docs/source/example_notebooks/dowhy_ranking_methods.ipynb
-estimator_list = [
-    "backdoor.linear_regression",
-    # "backdoor.propensity_score_stratification",
-    "backdoor.propensity_score_matching",
-    "backdoor.propensity_score_weighting",
-    "backdoor.econml.dml.DML",
-    "backdoor.econml.dr.LinearDRLearner",
-    # "backdoor.econml.metalearners.TLearner",
-    # "backdoor.econml.metalearners.XLearner",
-    # "backdoor.causalml.inference.meta.LRSRegressor",
-    # "backdoor.causalml.inference.meta.XGBTRegressor",
-    # "backdoor.causalml.inference.meta.MLPTRegressor",
-    # "backdoor.causalml.inference.meta.BaseXRegressor"
-]
-
+# Works: backdoor.linear_regression
 estimate = model.estimate_effect(
     identified_estimand=estimand,
-    method_name='backdoor.linear_regression')
+    method_name='backdoor.linear_regression',
+    method_params=None)
 
 
 # Plot Slope of line between action and outcome = causal effect
 dowhy.plotter.plot_causal_effect(
     estimate, df["teljesítmény"], df["CO2 kibocsátás gkm V7"])
 
+
+print("**** estimate:\n")
 print(estimate)
 print("Causal Estimate is " + str(estimate.value))
 
