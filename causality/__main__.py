@@ -1,3 +1,4 @@
+import tkinter as tk
 from causal_inference import Causal_inference
 from causal_discovery import Causal_discovery
 
@@ -51,7 +52,15 @@ def read_configuration(CONFIG_FILE):
     return data
 
 
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
+
+
 if __name__ == "__main__":
+    app = App()
+    app.mainloop()
+
     data = read_configuration(CONFIG_FILE)
     applied_input_files = []
 
