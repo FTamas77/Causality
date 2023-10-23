@@ -13,7 +13,12 @@ ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
 CONFIG_FILE = os.path.join(ROOT_DIR, 'causality', 'measurement_config.json')
 
 
-def causal_inference(applied_input_file):
+def causal_inference(applied_input_files):
+    """_summary_
+
+    Args:
+        applied_input_files (_type_): _description_
+    """
     causality = Causal_inference(applied_input_file)
 
     df = causality.read_input_data()
@@ -27,35 +32,29 @@ def causal_inference(applied_input_file):
     causality.refute(model, estimand, estimate)
 
 
-def causal_discovery(applied_input_file):
-    causality = Causal_discovery(applied_input_file)
-
+def causal_discovery(applied_input_files):
+    causality = Causal_discovery(applied_input_files)
     df = causality.read_input_data()
     causality.calculate_pc(df)
     causality.calculate_fci(df)
     causality.calculate_ges(df)
 
 
-def main(applied_input_file):
-    causal_inference(applied_input_file)
-    causal_discovery(applied_input_file)
+def main(applied_input_files):
+    # causal_inference(applied_input_files)
+    causal_discovery(applied_input_files)
 
 
 def read_configuration(CONFIG_FILE):
     with open(CONFIG_FILE) as json_file:
         data = json.load(json_file)
-
     return data
 
 
 if __name__ == "__main__":
     data = read_configuration(CONFIG_FILE)
+    applied_input_files = []
 
-    print("Read the following input files:\n")
-    for input_file in data['input_files']:
-        print(input_file)
-
-    applied_input_file = data['input_files']
-
-    # applied_input_file = data['input_file_test']
-    main(applied_input_file)
+    # applied_input_file = data['input_files']
+    applied_input_files = data['input_file_test']
+    main(applied_input_files)
