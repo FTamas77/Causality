@@ -25,3 +25,13 @@
 * Test to upload [test_pypi](https://test.pypi.org/account/register/https://test.pypi.org/account/register/)
   * Upload: `py -m twine upload --repository testpypi dist/*`
 
+# Data set:
+* Added as a submodule
+* https://github.com/FTamas77/dataset
+
+# Configuration:
+* Example: measurement_config.json
+* Schema: measurement_config_schema.json
+
+# GUI:
+* Tkinter
