@@ -16,6 +16,8 @@ import pygraphviz
 import os
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+
 from utils import scatter_plot_with_correlation_line, read_input_data
 
 import matplotlib
@@ -67,9 +69,11 @@ class Causal_inference:
             graph=graph
         )
 
-        # It saves the file too
-        CAUSAL_MODEL_FILE = os.path.join(ROOT_DIR, 'doc', 'causal_model')
-        model.view_model(layout="dot", file_name=CAUSAL_MODEL_FILE)
+        # Figure 2.
+        # plt.figure("Fig. 2. Manually created input causal graph")
+        # CAUSAL_MODEL_FILE = os.path.join(ROOT_DIR, 'doc', 'causal_input_graph')
+        # model.view_model(layout="dot", file_name=CAUSAL_MODEL_FILE)
+        # plt.close()
 
         return model
 

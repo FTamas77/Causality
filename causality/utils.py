@@ -8,7 +8,8 @@ import os
 from pathlib import Path
 
 ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
-INPUT_DATA_DIR = os.path.join(ROOT_DIR, 'input_data')
+# TODO: configurable
+INPUT_DATA_DIR = os.path.join(ROOT_DIR, 'dataset')
 
 
 def read_input_data(keep_cols, list_of_files):
@@ -46,7 +47,8 @@ def read_input_data(keep_cols, list_of_files):
 
 
 def scatter_plot_with_correlation_line(x, y):
-    """ Plots the input columns """
+    """ Plots the input columns
+    Now, only the inference uses this function. """
 
     plt.scatter(x, y, c="#c23424")
 
@@ -59,4 +61,7 @@ def scatter_plot_with_correlation_line(x, y):
 
     plt.plot(X_plot, m*X_plot + b, '-')
 
-    plt.show()
+    # Figure 1
+    # plt.figure("Fig. 1: scatter_plot_with_correlation_line")
+    # plt.show(block=False)
+    # plt.close()

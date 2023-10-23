@@ -5,9 +5,7 @@ from causallearn.search.ConstraintBased.FCI import fci
 from causallearn.search.ConstraintBased.PC import pc
 from causallearn.utils.GraphUtils import GraphUtils
 
-import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
-
 import io
 import os
 from pathlib import Path
