@@ -4,6 +4,7 @@ from tkinter import *
 import tkinter as tk
 from tkinter import ttk
 
+from data_reader import data_reader
 from causal_inference import Causal_inference
 from causal_discovery import Causal_discovery
 
@@ -41,11 +42,18 @@ def causal_inference(applied_input_files, progressBar, write_log):
         applied_input_files (array): list of input files
     """
     write_log.set_log("Causal_inference is called")
-    causality = Causal_inference(applied_input_files)
+
+    keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
+                 "hengerűrtartalom", "Elhaladási zaj dBA"]
+
+    reader = data_reader(applied_input_files)
+    df = reader.read_input_data(keep_cols)
+
+    causality = Causal_inference()
     progressBar.config(value=10)
 
     write_log.set_log("Reading input data")
-    df = causality.read_input_data()
+    # df = causality.read_input_data()
     progressBar.config(value=20)
 
     write_log.set_log("Create the model")
@@ -75,11 +83,24 @@ def causal_discovery(applied_input_files, progressBar, write_log):
     """
 
     write_log.set_log("Discovery is called")
-    causality = Causal_discovery(applied_input_files)
+
+    # simple or extended
+    keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
+                 "hengerűrtartalom", "Elhaladási zaj dBA",
+                 "Összevont átlagfogy", "Korr abszorp együttható", "kilométeróra állás", "gy fogy ért orszúton"]
+
+    keep_cols_label = ["Performance", "CO2 emission",
+                       "Cylinder cap.", "Passing noise",
+                       "Sum. consumption", "Corr. abs. co.", "Actual kilometers", "Cons. on roads"]
+
+    reader = data_reader(applied_input_files)
+    df = reader.read_input_data(keep_cols)
+
+    causality = Causal_discovery()
     progressBar.config(value=20)
 
     write_log.set_log("read input data")
-    df = causality.read_input_data()
+    # df = causality.read_input_data()
     progressBar.config(value=40)
 
     write_log.set_log("pc")

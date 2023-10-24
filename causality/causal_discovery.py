@@ -11,8 +11,6 @@ import os
 from pathlib import Path
 import networkx as nx
 
-from utils import read_input_data
-
 ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
 
 
@@ -23,8 +21,7 @@ class Causal_discovery:
     Causal discovery class:
     only the configuration is stored, calculated causal discovery object are not """
 
-    def __init__(self, input_files):
-        self.input_files = input_files
+    def __init__(self):
 
         # simple or extended
         self.keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
@@ -34,22 +31,6 @@ class Causal_discovery:
         self.keep_cols_label = ["Performance", "CO2 emission",
                                 "Cylinder cap.", "Passing noise",
                                 "Sum. consumption", "Corr. abs. co.", "Actual kilometers", "Cons. on roads"]
-
-    def read_input_data(self):
-        df = read_input_data(self.keep_cols, self.input_files)
-
-        print("\nSize of the input data: " +
-              str(df.shape[0]) + "x" + str(df.shape[1]) + "\n\nAnd the input data:\n")
-
-        print(df)
-
-        print("**** Header:\n")
-        print(df.head())
-
-        print("**** Numpy:\n")
-        print(df.to_numpy())
-
-        return df
 
     def calculate_pc(self, df):
         cg = pc(df.to_numpy())
