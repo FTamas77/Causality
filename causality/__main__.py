@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from data_reader import data_reader
+from logger import logger
 from causal_inference import Causal_inference
 from causal_discovery import Causal_discovery
 
@@ -25,12 +26,6 @@ top = Tk()
 
 
 def get_config(configuration_file):
-    """_summary_
-
-    Args:
-        applied_input_files (array): list of input files
-    """
-
     data = read_configuration(configuration_file)
     return data
 
@@ -41,7 +36,7 @@ def causal_inference(applied_input_files, progressBar, write_log):
     Args:
         applied_input_files (array): list of input files
     """
-    write_log.set_log("Causal_inference is called")
+    write_log.print_log("Causal_inference is called")
 
     keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
                  "hengerűrtartalom", "Elhaladási zaj dBA"]
@@ -52,25 +47,25 @@ def causal_inference(applied_input_files, progressBar, write_log):
     causality = Causal_inference()
     progressBar.config(value=10)
 
-    write_log.set_log("Reading input data")
+    write_log.print_log("Reading input data")
     # df = causality.read_input_data()
     progressBar.config(value=20)
 
-    write_log.set_log("Create the model")
+    write_log.print_log("Create the model")
     model = causality.create_model(df)
     progressBar.config(value=30)
 
-    write_log.set_log("Identify effect")
+    write_log.print_log("Identify effect")
     estimand = causality.identify_effect(model)
     progressBar.config(value=40)
 
-    write_log.set_log("Estimate effect")
+    write_log.print_log("Estimate effect")
     estimate = causality.estimate_effect(model, estimand)
     progressBar.config(value=80)
     # dowhy.plotter.plot_causal_effect(
     # estimate, df["teljesítmény"], df["CO2 kibocsátás gkm V7"])
 
-    write_log.set_log("Refute")
+    write_log.print_log("Refute")
     causality.refute(model, estimand, estimate)
     progressBar.config(value=100)
 
@@ -82,7 +77,7 @@ def causal_discovery(applied_input_files, progressBar, write_log):
         applied_input_files (array): list of input files
     """
 
-    write_log.set_log("Discovery is called")
+    write_log.print_log("Discovery is called")
 
     # simple or extended
     keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
@@ -99,19 +94,19 @@ def causal_discovery(applied_input_files, progressBar, write_log):
     causality = Causal_discovery()
     progressBar.config(value=20)
 
-    write_log.set_log("read input data")
+    write_log.print_log("read input data")
     # df = causality.read_input_data()
     progressBar.config(value=40)
 
-    write_log.set_log("pc")
+    write_log.print_log("pc")
     causality.calculate_pc(df)
     progressBar.config(value=60)
 
-    write_log.set_log("fci")
+    write_log.print_log("fci")
     causality.calculate_fci(df)
     progressBar.config(value=80)
 
-    write_log.set_log("ges")
+    write_log.print_log("ges")
     causality.calculate_ges(df)
     progressBar.config(value=100)
 
@@ -122,18 +117,7 @@ def read_configuration(CONFIG_FILE):
     return data
 
 
-class Output:
-    def __init__(self, text_widget):
-        self.text_space = text_widget
-
-    def set_log(self, inputStr):
-        self.text_space.insert('1.0', inputStr)
-        self.text_space.insert('1.0', "\n")
-        top.update()
-
 def main():
-    print("Starting.")
-    print("Reading configuration.")
     data = get_config(CONFIG_FILE)
 
     applied_input_files = []
@@ -149,7 +133,10 @@ def main():
     progressBar = ttk.Progressbar(
         content, length=400, orient=HORIZONTAL, mode='determinate', maximum=100, value=0)
     outputtext = tk.Text(content, wrap='word', height=11, width=50)
-    write_log = Output(outputtext)
+    write_log = logger(top, outputtext)
+    print(write_log)
+    write_log2 = logger(top, outputtext)
+    print(write_log2)
     causal_inference_button = ttk.Button(content, text="causal inference",
                                          command=lambda: causal_inference(applied_input_files, progressBar, write_log))
     causal_discovery_button = ttk.Button(content, text="causal discovery",
@@ -166,6 +153,6 @@ def main():
 
     top.mainloop()
 
+
 if __name__ == "__main__":
     main()
-

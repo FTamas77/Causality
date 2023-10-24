@@ -14,3 +14,11 @@ print("\nSize of the input data: " +
       str(df.shape[0]) + "x" + str(df.shape[1]) + "\n\nAnd the input data:\n")
 print(df)
 ```
+
+Print the correlation line:
+
+```
+    def print_scatter_plot_with_correlation_line():
+        scatter_plot_with_correlation_line(
+            df['teljesítmény'], df["CO2 kibocsátás gkm V7"])
+            ```

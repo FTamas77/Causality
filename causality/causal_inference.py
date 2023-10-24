@@ -15,9 +15,7 @@ import pygraphviz
 
 import os
 from pathlib import Path
-
 import matplotlib.pyplot as plt
-
 import matplotlib
 matplotlib.use('TKAgg')
 
@@ -25,9 +23,6 @@ ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
 
 
 class Causal_inference:
-    """Causal inference class:
-    only the configuration is stored, calculated causal inference object are not """
-
     def __init__(self):
         self.keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
                           "hengerűrtartalom", "Elhaladási zaj dBA"]

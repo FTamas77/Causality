@@ -15,19 +15,11 @@ ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
 
 
 class Causal_discovery:
-    """ 
-    https://causal-learn.readthedocs.io/en/latest/search_methods_index/Score-based%20causal%20discovery%20methods/GES.html#usage
-
-    Causal discovery class:
-    only the configuration is stored, calculated causal discovery object are not """
-
     def __init__(self):
-
         # simple or extended
         self.keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
                           "hengerűrtartalom", "Elhaladási zaj dBA",
                           "Összevont átlagfogy", "Korr abszorp együttható", "kilométeróra állás", "gy fogy ért orszúton"]
-
         self.keep_cols_label = ["Performance", "CO2 emission",
                                 "Cylinder cap.", "Passing noise",
                                 "Sum. consumption", "Corr. abs. co.", "Actual kilometers", "Cons. on roads"]
