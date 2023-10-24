@@ -131,8 +131,7 @@ class Output:
         self.text_space.insert('1.0', "\n")
         top.update()
 
-
-if __name__ == "__main__":
+def main():
     print("Starting.")
     print("Reading configuration.")
     data = get_config(CONFIG_FILE)
@@ -166,3 +165,7 @@ if __name__ == "__main__":
                     sticky='NSWE', padx=5, pady=5)
 
     top.mainloop()
+
+if __name__ == "__main__":
+    main()
+
