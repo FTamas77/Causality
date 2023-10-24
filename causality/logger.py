@@ -27,6 +27,6 @@ class logger:
         return getattr(self.instance, name)
 
     def print_log(self, inputStr):
-        self.instance.text_widget.insert('1.0', inputStr)
         self.instance.text_widget.insert('1.0', "\n")
+        self.instance.text_widget.insert('1.0', inputStr)
         self.instance.top.update()

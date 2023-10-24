@@ -6,8 +6,7 @@ from tkinter import ttk
 
 from data_reader import data_reader
 from logger import logger
-from causal_inference import Causal_inference
-from causal_discovery import Causal_discovery
+from causal_algs import causal_algs
 
 import dowhy.plotter
 import dowhy
@@ -25,105 +24,18 @@ CONFIG_FILE = os.path.join(ROOT_DIR, 'causality', 'measurement_config.json')
 top = Tk()
 
 
-def get_config(configuration_file):
-    data = read_configuration(configuration_file)
-    return data
-
-
-def causal_inference(applied_input_files, progressBar, write_log):
-    """_summary_
-
-    Args:
-        applied_input_files (array): list of input files
-    """
-    write_log.print_log("Causal_inference is called")
-
-    keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
-                 "hengerűrtartalom", "Elhaladási zaj dBA"]
-
-    reader = data_reader(applied_input_files)
-    df = reader.read_input_data(keep_cols)
-
-    causality = Causal_inference()
-    progressBar.config(value=10)
-
-    write_log.print_log("Reading input data")
-    # df = causality.read_input_data()
-    progressBar.config(value=20)
-
-    write_log.print_log("Create the model")
-    model = causality.create_model(df)
-    progressBar.config(value=30)
-
-    write_log.print_log("Identify effect")
-    estimand = causality.identify_effect(model)
-    progressBar.config(value=40)
-
-    write_log.print_log("Estimate effect")
-    estimate = causality.estimate_effect(model, estimand)
-    progressBar.config(value=80)
-    # dowhy.plotter.plot_causal_effect(
-    # estimate, df["teljesítmény"], df["CO2 kibocsátás gkm V7"])
-
-    write_log.print_log("Refute")
-    causality.refute(model, estimand, estimate)
-    progressBar.config(value=100)
-
-
-def causal_discovery(applied_input_files, progressBar, write_log):
-    """_summary_
-
-    Args:
-        applied_input_files (array): list of input files
-    """
-
-    write_log.print_log("Discovery is called")
-
-    # simple or extended
-    keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
-                 "hengerűrtartalom", "Elhaladási zaj dBA",
-                 "Összevont átlagfogy", "Korr abszorp együttható", "kilométeróra állás", "gy fogy ért orszúton"]
-
-    keep_cols_label = ["Performance", "CO2 emission",
-                       "Cylinder cap.", "Passing noise",
-                       "Sum. consumption", "Corr. abs. co.", "Actual kilometers", "Cons. on roads"]
-
-    reader = data_reader(applied_input_files)
-    df = reader.read_input_data(keep_cols)
-
-    causality = Causal_discovery()
-    progressBar.config(value=20)
-
-    write_log.print_log("read input data")
-    # df = causality.read_input_data()
-    progressBar.config(value=40)
-
-    write_log.print_log("pc")
-    causality.calculate_pc(df)
-    progressBar.config(value=60)
-
-    write_log.print_log("fci")
-    causality.calculate_fci(df)
-    progressBar.config(value=80)
-
-    write_log.print_log("ges")
-    causality.calculate_ges(df)
-    progressBar.config(value=100)
-
-
 def read_configuration(CONFIG_FILE):
     with open(CONFIG_FILE) as json_file:
         data = json.load(json_file)
     return data
 
 
-def main():
-    data = get_config(CONFIG_FILE)
+def get_config(configuration_file):
+    data = read_configuration(configuration_file)
+    return data
 
-    applied_input_files = []
-    # applied_input_file = data['input_files']
-    applied_input_files = data['input_file_test']
 
+def build_gui(applied_input_files):
     top.title("Causality")
     content = ttk.Frame(top, padding=(3, 3, 3, 3))
     content.grid(column=0, row=0)
@@ -133,14 +45,12 @@ def main():
     progressBar = ttk.Progressbar(
         content, length=400, orient=HORIZONTAL, mode='determinate', maximum=100, value=0)
     outputtext = tk.Text(content, wrap='word', height=11, width=50)
-    write_log = logger(top, outputtext)
-    print(write_log)
-    write_log2 = logger(top, outputtext)
-    print(write_log2)
+
+    logger_obj = logger(top, outputtext)
     causal_inference_button = ttk.Button(content, text="causal inference",
-                                         command=lambda: causal_inference(applied_input_files, progressBar, write_log))
+                                         command=lambda: causal_algs.causal_inference(applied_input_files, progressBar, logger_obj))
     causal_discovery_button = ttk.Button(content, text="causal discovery",
-                                         command=lambda: causal_discovery(applied_input_files, progressBar, write_log))
+                                         command=lambda: causal_algs.causal_discovery(applied_input_files, progressBar, logger_obj))
     exit_button = ttk.Button(content, text="exit", command=top.destroy)
 
     title.grid(column=0, row=1)
@@ -150,6 +60,16 @@ def main():
     progressBar.grid(column=1, row=4, sticky=(N, W), pady=5)
     outputtext.grid(column=0, row=5, columnspan=2,
                     sticky='NSWE', padx=5, pady=5)
+
+
+def main():
+
+    data = get_config(CONFIG_FILE)
+    applied_input_files = []
+    # applied_input_file = data['input_files']
+    applied_input_files = data['input_file_test']
+
+    build_gui(applied_input_files)
 
     top.mainloop()
 
