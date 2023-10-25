@@ -16,5 +16,8 @@
       "source": "Git Bash"
     }
   },
-  "[python]": {}
+  "[python]": {
+    "editor.defaultFormatter": "eeyore.yapf"
+  },
+  "python.formatting.provider": "yapf"
 }

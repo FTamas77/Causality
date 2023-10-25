@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-import io
 import os
 from pathlib import Path
 
@@ -59,7 +58,7 @@ def scatter_plot_with_correlation_line(x, y):
     plt.xlabel('Performance')
     plt.ylabel("CO2 emission")
 
-    plt.plot(X_plot, m*X_plot + b, '-')
+    plt.plot(X_plot, m * X_plot + b, '-')
 
     # Figure 1
     # plt.figure("Fig. 1: scatter_plot_with_correlation_line")

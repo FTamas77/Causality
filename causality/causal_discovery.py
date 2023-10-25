@@ -1,15 +1,10 @@
 from causallearn.search.ScoreBased.GES import ges
-from causallearn.search.FCMBased.lingam.utils import make_dot
-from causallearn.search.FCMBased import lingam
 from causallearn.search.ConstraintBased.FCI import fci
 from causallearn.search.ConstraintBased.PC import pc
 from causallearn.utils.GraphUtils import GraphUtils
 
-import matplotlib.pyplot as plt
-import io
 import os
 from pathlib import Path
-import networkx as nx
 
 ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
 

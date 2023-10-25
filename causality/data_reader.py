@@ -1,4 +1,4 @@
-from utils import scatter_plot_with_correlation_line, read_input_data
+from utils import read_input_data
 
 
 class data_reader:

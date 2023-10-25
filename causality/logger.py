@@ -1,8 +1,3 @@
-from tkinter.simpledialog import askinteger
-from tkinter import messagebox
-from tkinter import *
-import tkinter as tk
-from tkinter import ttk
 
 
 class logger:

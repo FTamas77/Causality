@@ -1,21 +1,11 @@
-import re
-import networkx as nx
 
-from IPython.display import Image, display
 
 from dowhy import CausalModel
-import dowhy.plotter
-import dowhy
 
-import numpy as np
-import pandas as pd
 
-import graphviz
-import pygraphviz
 
 import os
 from pathlib import Path
-import matplotlib.pyplot as plt
 import matplotlib
 
 matplotlib.use("TKAgg")
@@ -24,6 +14,7 @@ ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
 
 
 class Causal_inference:
+
     def __init__(self):
         self.keep_cols = [
             "teljesítmény",
@@ -85,9 +76,9 @@ class Causal_inference:
         return estimate
 
     def refute(self, model, estimand, estimate):
-        res_random = model.refute_estimate(
-            estimand, estimate, method_name="random_common_cause"
-        )
+        res_random = model.refute_estimate(estimand,
+                                           estimate,
+                                           method_name="random_common_cause")
 
         print("**** random_common_cause:\n")
         print(res_random)

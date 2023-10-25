@@ -1,22 +1,11 @@
-from tkinter.simpledialog import askinteger
-from tkinter import messagebox
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
 
-from data_reader import data_reader
 from logger import logger
 from causal_algs import causal_algs
 
-import dowhy.plotter
-import dowhy
 
-import logging
-import json
-import os
-import io
-from contextlib import redirect_stdout
-from pathlib import Path
 
 
 class gui:

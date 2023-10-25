@@ -1,5 +1,3 @@
-
-
 from data_reader import data_reader
 
 from causal_inference import Causal_inference
@@ -16,8 +14,10 @@ class causal_algs:
     def causal_inference(applied_input_files, progressBar, write_log):
         write_log.print_log("Causal_inference is called")
 
-        keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
-                     "hengerűrtartalom", "Elhaladási zaj dBA"]
+        keep_cols = [
+            "teljesítmény", "CO2 kibocsátás gkm V7", "hengerűrtartalom",
+            "Elhaladási zaj dBA"
+        ]
 
         reader = data_reader(applied_input_files)
         df = reader.read_input_data(keep_cols)
@@ -52,13 +52,18 @@ class causal_algs:
         write_log.print_log("Discovery is called")
 
         # simple or extended
-        keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
-                     "hengerűrtartalom", "Elhaladási zaj dBA",
-                     "Összevont átlagfogy", "Korr abszorp együttható", "kilométeróra állás", "gy fogy ért orszúton"]
+        keep_cols = [
+            "teljesítmény", "CO2 kibocsátás gkm V7", "hengerűrtartalom",
+            "Elhaladási zaj dBA", "Összevont átlagfogy",
+            "Korr abszorp együttható", "kilométeróra állás",
+            "gy fogy ért orszúton"
+        ]
 
-        keep_cols_label = ["Performance", "CO2 emission",
-                           "Cylinder cap.", "Passing noise",
-                           "Sum. consumption", "Corr. abs. co.", "Actual kilometers", "Cons. on roads"]
+        keep_cols_label = [
+            "Performance", "CO2 emission", "Cylinder cap.", "Passing noise",
+            "Sum. consumption", "Corr. abs. co.", "Actual kilometers",
+            "Cons. on roads"
+        ]
 
         reader = data_reader(applied_input_files)
         df = reader.read_input_data(keep_cols)
