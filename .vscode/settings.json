@@ -16,8 +16,5 @@
       "source": "Git Bash"
     }
   },
-  "[python]": {
-    "editor.defaultFormatter": "ms-python.autopep8"
-  },
-  "python.formatting.provider": "none"
+  "[python]": {}
 }

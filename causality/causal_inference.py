@@ -17,15 +17,20 @@ import os
 from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('TKAgg')
+
+matplotlib.use("TKAgg")
 
 ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
 
 
 class Causal_inference:
     def __init__(self):
-        self.keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
-                          "hengerűrtartalom", "Elhaladási zaj dBA"]
+        self.keep_cols = [
+            "teljesítmény",
+            "CO2 kibocsátás gkm V7",
+            "hengerűrtartalom",
+            "Elhaladási zaj dBA",
+        ]
 
     def create_model(self, df):
         graph = """graph    [
@@ -43,9 +48,9 @@ class Causal_inference:
 
         model = CausalModel(
             data=df,
-            treatment='teljesítmény',
-            outcome='CO2 kibocsátás gkm V7',
-            graph=graph
+            treatment="teljesítmény",
+            outcome="CO2 kibocsátás gkm V7",
+            graph=graph,
         )
 
         # Figure 2.
@@ -70,8 +75,9 @@ class Causal_inference:
     def estimate_effect(self, model, estimand):
         estimate = model.estimate_effect(
             identified_estimand=estimand,
-            method_name='backdoor.linear_regression',
-            method_params=None)
+            method_name="backdoor.linear_regression",
+            method_params=None,
+        )
 
         print("**** estimate:\n")
         print(estimate)
@@ -80,7 +86,8 @@ class Causal_inference:
 
     def refute(self, model, estimand, estimate):
         res_random = model.refute_estimate(
-            estimand, estimate, method_name="random_common_cause")
+            estimand, estimate, method_name="random_common_cause"
+        )
 
         print("**** random_common_cause:\n")
         print(res_random)

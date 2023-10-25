@@ -7,6 +7,10 @@ from causal_discovery import Causal_discovery
 
 
 class causal_algs:
+    """
+    It has only static members since it only implements algoritms
+    Has no data
+    """
 
     @staticmethod
     def causal_inference(applied_input_files, progressBar, write_log):
