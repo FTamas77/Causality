@@ -1,88 +1,78 @@
-from data_reader import data_reader
-
 from causal_inference import Causal_inference
 from causal_discovery import Causal_discovery
+from logger import logger as l
+from configurator import configurator
+from data_reader import data_reader
 
 
 class causal_algs:
-    """
-    It has only static members since it only implements algoritms
-    Has no data
-    """
 
     @staticmethod
-    def causal_inference(applied_input_files, progressBar, write_log):
-        write_log.print_log("Causal_inference is called")
+    def causal_inference(progressBar):
 
-        keep_cols = [
-            "teljesítmény", "CO2 kibocsátás gkm V7", "hengerűrtartalom",
-            "Elhaladási zaj dBA"
-        ]
+        #l = logger.get_instance()
+        l.print_log("Causal_inference is called")
+        l.print_log("Reading input data started")
 
-        reader = data_reader(applied_input_files)
-        df = reader.read_input_data(keep_cols)
+        c = configurator()
+        df = data_reader.read_input_data(c.get_causal_inference_keep_cols(),
+                                         c.get_applied_input_files())
+        progressBar.config(value=20)
+        l.print_log("Reading input data completed")
 
         causality = Causal_inference()
         progressBar.config(value=10)
 
-        write_log.print_log("Reading input data")
-        # df = causality.read_input_data()
-        progressBar.config(value=20)
-
-        write_log.print_log("Create the model")
+        l.print_log("Create the model")
         model = causality.create_model(df)
         progressBar.config(value=30)
+        l.print_log("The model has been created")
 
-        write_log.print_log("Identify effect")
+        l.print_log("Identify effect")
         estimand = causality.identify_effect(model)
         progressBar.config(value=40)
+        l.print_log("Identify effect is done")
 
-        write_log.print_log("Estimate effect")
+        l.print_log("Estimate effect")
         estimate = causality.estimate_effect(model, estimand)
         progressBar.config(value=80)
+        # utils.py
         # dowhy.plotter.plot_causal_effect(
         # estimate, df["teljesítmény"], df["CO2 kibocsátás gkm V7"])
+        l.print_log("Estimate effect is done")
 
-        write_log.print_log("Refute")
+        l.print_log("Refute")
         causality.refute(model, estimand, estimate)
         progressBar.config(value=100)
+        l.print_log("Refute is done, computation completed")
 
     @staticmethod
-    def causal_discovery(applied_input_files, progressBar, write_log):
-        write_log.print_log("Discovery is called")
+    def causal_discovery(progressBar):
 
-        # simple or extended
-        keep_cols = [
-            "teljesítmény", "CO2 kibocsátás gkm V7", "hengerűrtartalom",
-            "Elhaladási zaj dBA", "Összevont átlagfogy",
-            "Korr abszorp együttható", "kilométeróra állás",
-            "gy fogy ért orszúton"
-        ]
+        #l = logger.get_instance()
+        l.print_log("Discovery is called")
+        l.print_log("Read the input data")
 
-        keep_cols_label = [
-            "Performance", "CO2 emission", "Cylinder cap.", "Passing noise",
-            "Sum. consumption", "Corr. abs. co.", "Actual kilometers",
-            "Cons. on roads"
-        ]
-
-        reader = data_reader(applied_input_files)
-        df = reader.read_input_data(keep_cols)
-
-        causality = Causal_discovery()
+        c = configurator()
+        df = data_reader.read_input_data(c.get_causal_discovery_keep_cols(),
+                                         c.get_applied_input_files())
+        l.print_log("Read the input data is done")
         progressBar.config(value=20)
 
-        write_log.print_log("read input data")
-        # df = causality.read_input_data()
+        causality = Causal_discovery()
         progressBar.config(value=40)
 
-        write_log.print_log("pc")
+        l.print_log("Run pc alg")
         causality.calculate_pc(df)
         progressBar.config(value=60)
+        l.print_log("Run pc alg is done")
 
-        write_log.print_log("fci")
+        l.print_log("Run fci alg")
         causality.calculate_fci(df)
         progressBar.config(value=80)
+        l.print_log("Run fci alg is done")
 
-        write_log.print_log("ges")
+        l.print_log("Run ges")
         causality.calculate_ges(df)
         progressBar.config(value=100)
+        l.print_log("Run ges is done")

@@ -1,29 +1,39 @@
-from utils import read_input_data
+import os
+import pandas as pd
+from configurator import configurator
 
 
 class data_reader:
-    """
-    it does not store the data because we keep different colls in each case
-    """
 
-    class __data_reader:
-        def __init__(self, input_files):
-            self.input_files = input_files
+    @staticmethod
+    def read_input_data(keep_cols, list_of_files):
 
-        def __str__(self):
-            return repr(self) + self.input_files
+        c = configurator()
+        list_of_files_with_path = []
+        for file in list_of_files:
+            input_file = os.path.join(c.get_INPUT_DATA_DIR(), file)
+            list_of_files_with_path.append(input_file)
 
-    instance = None
+        retdf = pd.DataFrame()
+        for file in list_of_files_with_path:
+            df = pd.read_excel(file, skiprows=2)
 
-    def __init__(self, input_files):
-        if not data_reader.instance:
-            data_reader.instance = data_reader.__data_reader(input_files)
-        else:
-            data_reader.instance.input_files = input_files
+            df.columns = df.columns.str.replace(r'[', '')
+            df.columns = df.columns.str.replace(r']', '')
+            df.columns = df.columns.str.replace(r'.', '')
+            df.columns = df.columns.str.replace(r'/', '')
+            df.columns = df.columns.str.replace(r'(', '')
+            df.columns = df.columns.str.replace(r')', '')
+            df.columns = df.columns.str.replace(r'-', '')
+            # df.columns = df.columns.str.replace(r' ', '')
+            df.columns = df.columns.str.replace(r'%', '')
 
-    def __getattr__(self, name):
-        return getattr(self.instance, name)
+            # remove not used columns
+            df = df[keep_cols]
 
-    def read_input_data(self, keep_cols):
-        df = read_input_data(keep_cols, self.input_files)
-        return df
+            # remove nan lines
+            df = df.dropna()
+
+            retdf = pd.concat([retdf, df], ignore_index=True)
+
+        return retdf

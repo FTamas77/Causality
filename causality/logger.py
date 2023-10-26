@@ -1,13 +1,10 @@
-
-
 class logger:
+
     class __logger:
+
         def __init__(self, top, text_widget):
             self.top = top
             self.text_widget = text_widget
-
-        def __str__(self):
-            return repr(self) + self.top + self.text_widget
 
     instance = None
 
@@ -18,10 +15,12 @@ class logger:
             logger.instance.top = top
             logger.instance.text_widget = text_widget
 
-    def __getattr__(self, name):
-        return getattr(self.instance, name)
-
-    def print_log(self, inputStr):
-        self.instance.text_widget.insert('1.0', "\n")
-        self.instance.text_widget.insert('1.0', inputStr)
-        self.instance.top.update()
+    @staticmethod
+    def print_log(inputStr):
+        # TODO: This should not be static.
+        if not logger.instance:
+            raise Exception("logger instance is not created")
+        else:
+            logger.instance.text_widget.insert('1.0', inputStr)
+            logger.instance.text_widget.insert('1.0', "\n")
+            logger.instance.top.update()

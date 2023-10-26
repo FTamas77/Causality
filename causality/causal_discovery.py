@@ -4,35 +4,40 @@ from causallearn.search.ConstraintBased.PC import pc
 from causallearn.utils.GraphUtils import GraphUtils
 
 import os
-from pathlib import Path
 
-ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
+from configurator import configurator
 
 
 class Causal_discovery:
-    def __init__(self):
-        # simple or extended
-        self.keep_cols = ["teljesítmény", "CO2 kibocsátás gkm V7",
-                          "hengerűrtartalom", "Elhaladási zaj dBA",
-                          "Összevont átlagfogy", "Korr abszorp együttható", "kilométeróra állás", "gy fogy ért orszúton"]
-        self.keep_cols_label = ["Performance", "CO2 emission",
-                                "Cylinder cap.", "Passing noise",
-                                "Sum. consumption", "Corr. abs. co.", "Actual kilometers", "Cons. on roads"]
+    """
+    It is only an algorithm, there is no data stored.
+    TODO: rename to: Causal_discovery_algs
+    """
 
     def calculate_pc(self, df):
         cg = pc(df.to_numpy())
-        pyd = GraphUtils.to_pydot(cg.G, labels=self.keep_cols_label)
-        PC_FILE = os.path.join(ROOT_DIR, 'doc', 'pc.png')
+
+        c = configurator()
+        pyd = GraphUtils.to_pydot(
+            cg.G, labels=c.get_causal_discovery_keep_cols_labels())
+
+        PC_FILE = os.path.join(c.get_ROOT_DIR(), 'doc', 'pc.png')
         pyd.write_png(PC_FILE)
 
     def calculate_fci(self, df):
         g, edges = fci(df.to_numpy())
-        pdy = GraphUtils.to_pydot(g, labels=self.keep_cols_label)
-        FCI_FILE = os.path.join(ROOT_DIR, 'doc', 'fci.png')
+        c = configurator()
+        pdy = GraphUtils.to_pydot(
+            g, labels=c.get_causal_discovery_keep_cols_labels())
+
+        FCI_FILE = os.path.join(c.get_ROOT_DIR(), 'doc', 'fci.png')
         pdy.write_png(FCI_FILE)
 
     def calculate_ges(self, df):
         Record = ges(df.to_numpy())
-        pyd = GraphUtils.to_pydot(Record['G'], labels=self.keep_cols_label)
-        GES_FILE = os.path.join(ROOT_DIR, 'doc', 'ges.png')
+        c = configurator()
+        pyd = GraphUtils.to_pydot(
+            Record['G'], labels=c.get_causal_discovery_keep_cols_labels())
+
+        GES_FILE = os.path.join(c.get_ROOT_DIR(), 'doc', 'ges.png')
         pyd.write_png(GES_FILE)
