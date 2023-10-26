@@ -27,7 +27,7 @@
 
 # Causality
 
-* Further technical/coding related notes [utils](./causality/dev.md).
+* Further technical/coding related notes [dev](./causality/dev.md).
 
 # Packaging
 

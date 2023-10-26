@@ -18,7 +18,11 @@ class gui:
         self.content = None
 
     def __put_to_grid(self):
-        self.title.grid(column=0, row=1)
+        self.title.grid(
+            column=0,
+            row=1,
+            columnspan=2,
+        )
         self.causal_inference_button.grid(column=0,
                                           row=2,
                                           sticky=(N, W),
@@ -38,6 +42,10 @@ class gui:
                              padx=5,
                              pady=5)
 
+    def __format_gui(self):
+        Font_tuple = ("Comic Sans MS", 15, "bold")
+        self.title.configure(font=Font_tuple)
+
     def build_gui(self):
         self.top.title("Causality")
         self.content = ttk.Frame(self.top, padding=(3, 3, 3, 3))
@@ -46,7 +54,7 @@ class gui:
             self.content, text="Causal inference and discovery computation:")
 
         self.progressBar = ttk.Progressbar(self.content,
-                                           length=400,
+                                           length=300,
                                            orient=HORIZONTAL,
                                            mode='determinate',
                                            maximum=100,
@@ -60,20 +68,31 @@ class gui:
         # TODO: we create it here, because it need variables, but it is a singleton
         self.logger_obj = logger(self.top, self.outputtext)
 
+        style = ttk.Style()
+        style.theme_use('alt')
+        style.configure('TButton',
+                        background='green',
+                        foreground='white',
+                        width=15,
+                        borderwidth=1,
+                        focusthickness=3,
+                        focuscolor='none')
+        style.map('TButton', background=[('active', 'green')])
         self.causal_inference_button = ttk.Button(
             self.content,
-            text="causal inference",
+            text="Causal inference",
             command=lambda: causal_algs.causal_inference(self.progressBar))
 
         self.causal_discovery_button = ttk.Button(
             self.content,
-            text="causal discovery",
+            text="Causal discovery",
             command=lambda: causal_algs.causal_discovery(self.progressBar))
 
         self.exit_button = ttk.Button(self.content,
                                       text="exit",
                                       command=self.top.destroy)
 
+        self.__format_gui()
         self.__put_to_grid()
 
     def start_gui(self):
