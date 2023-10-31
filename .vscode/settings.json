@@ -19,5 +19,10 @@
   "[python]": {
     "editor.defaultFormatter": "eeyore.yapf"
   },
-  "python.formatting.provider": "yapf"
+  "python.formatting.provider": "yapf",
+  "python.testing.pytestArgs": ["tests"],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.testing.autoTestDiscoverOnSaveEnabled": true
 }

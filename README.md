@@ -1,4 +1,5 @@
 # Table of Contents
+
 - [Table of Contents](#table-of-contents)
 - [Dev environment](#dev-environment)
 - [Useful comments](#useful-comments)
@@ -7,8 +8,11 @@
 - [Dataset](#dataset)
 - [Configuration](#configuration)
 - [GUI](#gui)
+- [git](#git)
+- [Ontology library](#ontology-library)
 
 ---
+
 # Dev environment
 
 * 3.10.6 seems to work with pygraphviz
@@ -49,3 +53,19 @@
 # GUI
 
 * Tkinter
+
+# git
+
+* Create tag: `git tag `<tagname>
+* Push tags: `git push origin --tags`
+* Move tags, steps:
+  * git tag -d <tagname>                  # delete the old tag locally
+  * git push origin :refs/tags/<tagname>  # delete the old tag remotely
+  * git tag <tagname> <commitId>          # make a new tag locally
+  * git push origin <tagname>             # push the new local tag to the remote 
+
+# Ontology library
+
+* Dev details [here](./ontologyLib/dev.md).
+  * Note: python path must be set
+

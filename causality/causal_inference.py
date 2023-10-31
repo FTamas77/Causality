@@ -10,6 +10,9 @@ matplotlib.use("TKAgg")
 class Causal_inference:
 
     def create_model(self, df):
+        """
+        https://en.wikipedia.org/wiki/Graph_Modelling_Language
+        """
         graph = """graph    [
                                             directed 1    
                                             node [id "hengerűrtartalom" label "hengerűrtartalom"]
