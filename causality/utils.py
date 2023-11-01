@@ -19,6 +19,6 @@ def scatter_plot_with_correlation_line(x, y):
     plt.plot(X_plot, m * X_plot + b, '-')
 
     # Figure 1
-    # plt.figure("Fig. 1: scatter_plot_with_correlation_line")
-    # plt.show(block=False)
-    # plt.close()
+    plt.figure("Fig. 1: scatter_plot_with_correlation_line")
+    plt.show(block=False)
+    plt.close()
