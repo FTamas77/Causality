@@ -37,7 +37,4 @@ class data_reader:
 
             retdf = pd.concat([retdf, df], ignore_index=True)
 
-        # use checkbox to enable or disable it
-        scatter_plot_with_correlation_line(df['teljesítmény'],
-                                           df["CO2 kibocsátás gkm V7"])
         return retdf

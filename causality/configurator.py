@@ -5,57 +5,48 @@ from pathlib import Path
 
 class configurator:
 
-    ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
-    CONFIG_FILE = os.path.join(ROOT_DIR, 'causality',
-                               'measurement_config.json')
-    INPUT_DATA_DIR = os.path.join(ROOT_DIR, 'dataset')
+    __ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
+    __CONFIG_FILE = os.path.join(__ROOT_DIR, 'causality',
+                                 'measurement_config.json')
+    __INPUT_DATA_DIR = os.path.join(__ROOT_DIR, 'dataset')
 
     class __configurator:
 
-        # Receive the json file and process here
-        def __init__(self, applied_input_files):
-            # simple or extended
-            # simple is the first four cols
-            # TODO: store these in the JSON config file.
-            self.causal_discovery_keep_cols = [
-                "teljesítmény", "CO2 kibocsátás gkm V7", "hengerűrtartalom",
-                "Elhaladási zaj dBA", "Összevont átlagfogy",
-                "Korr abszorp együttható", "kilométeróra állás",
-                "gy fogy ért orszúton"
-            ]
-            self.causal_discovery_keep_cols_label = [
-                "Performance", "CO2 emission", "Cylinder cap.",
-                "Passing noise", "Sum. consumption", "Corr. abs. co.",
-                "Actual kilometers", "Cons. on roads"
-            ]
-            self.causal_inference_keep_cols = [
-                "teljesítmény",
-                "CO2 kibocsátás gkm V7",
-                "hengerűrtartalom",
-                "Elhaladási zaj dBA",
-            ]
-
+        def __init__(self, applied_input_files, causal_discovery_keep_cols,
+                     causal_discovery_keep_cols_label,
+                     causal_inference_keep_cols):
             self.applied_input_files = applied_input_files
+            self.causal_discovery_keep_cols = causal_discovery_keep_cols
+            self.causal_discovery_keep_cols_label = causal_discovery_keep_cols_label
+            self.causal_inference_keep_cols = causal_inference_keep_cols
 
     instance = None
 
-    def __get_config(self):
-        with open(configurator.CONFIG_FILE) as json_file:
+    def __get_config(self, configuration_file):
+        with open(configuration_file, encoding='utf-8') as json_file:
             data = json.load(json_file)
         return data
 
-    def __init__(self):
+    def __init__(self, configuration_file=__CONFIG_FILE):
         if not configurator.instance:
-            # In case of further options, read all of them here,
-            # then pass to the instance
-            data = self.__get_config()
+            data = self.__get_config(configuration_file)
 
             applied_input_files = []
-            applied_input_files = data[
-                'input_file_test']  # data['input_files']
+            applied_input_files = data['input_files']
+
+            causal_discovery_keep_cols = []
+            causal_discovery_keep_cols = data['causal_discovery_keep_cols']
+
+            causal_discovery_keep_cols_label = []
+            causal_discovery_keep_cols_label = data[
+                'causal_discovery_keep_cols_label']
+
+            causal_inference_keep_cols = []
+            causal_inference_keep_cols = data['causal_inference_keep_cols']
 
             configurator.instance = configurator.__configurator(
-                applied_input_files)
+                applied_input_files, causal_discovery_keep_cols,
+                causal_discovery_keep_cols_label, causal_inference_keep_cols)
 
     def get_causal_discovery_keep_cols(self):
         return configurator.instance.causal_discovery_keep_cols
@@ -70,10 +61,10 @@ class configurator:
         return configurator.instance.applied_input_files
 
     def get_CONFIG_FILE(self):
-        return configurator.CONFIG_FILE
+        return configurator.__CONFIG_FILE
 
     def get_ROOT_DIR(self):
-        return configurator.ROOT_DIR
+        return configurator.__ROOT_DIR
 
     def get_INPUT_DATA_DIR(self):
-        return configurator.INPUT_DATA_DIR
+        return configurator.__INPUT_DATA_DIR

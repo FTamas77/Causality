@@ -36,9 +36,7 @@ class causal_algs:
         l.print_log("Estimate effect")
         estimate = causality.estimate_effect(model, estimand)
         progressBar.config(value=80)
-        # utils.py
-        # dowhy.plotter.plot_causal_effect(
-        # estimate, df["teljesítmény"], df["CO2 kibocsátás gkm V7"])
+
         l.print_log("Estimate effect is done")
 
         l.print_log("Refute")

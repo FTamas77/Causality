@@ -12,11 +12,28 @@
       "justMyCode": true
     },
     {
-      "name": "pytest",
+      "name": "pytest_ontology",
       "type": "python",
       "request": "launch",
       "module": "pytest",
-      "justMyCode": true
+      "justMyCode": true,
+      "args": ["-k", "test_ontology"]
+    },
+    {
+      "name": "pytest_causality",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "justMyCode": true,
+      "args": ["-k", "test_causality"]
+    },
+    {
+      "name": "pytest_web",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "justMyCode": true,
+      "args": ["-k", "test_web"]
     },
     {
       "name": "causality_gui",

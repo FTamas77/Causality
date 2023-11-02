@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter as tk
 from tkinter import ttk
 
+from edit_config_window_gui import edit_config_window_gui
 from logger import logger
 from causal_algs import causal_algs
 
@@ -12,8 +13,10 @@ class gui:
         self.top = Tk()
         self.title = None
         self.outputtext = None
+        # TODO: button should be in a array
         self.causal_inference_button = None
         self.causal_discovery_button = None
+        self.edit_config = None
         self.exit_button = None
         self.content = None
 
@@ -33,10 +36,12 @@ class gui:
                                           sticky=(N, W),
                                           pady=5)
 
-        self.exit_button.grid(column=0, row=4, sticky=(N, W), pady=5)
-        self.progressBar.grid(column=1, row=4, sticky=(N, W), pady=5)
+        self.edit_config.grid(column=0, row=4, sticky=(N, W), pady=5)
+
+        self.exit_button.grid(column=0, row=5, sticky=(N, W), pady=5)
+        self.progressBar.grid(column=1, row=5, sticky=(N, W), pady=5)
         self.outputtext.grid(column=0,
-                             row=5,
+                             row=6,
                              columnspan=2,
                              sticky='NSWE',
                              padx=5,
@@ -77,6 +82,7 @@ class gui:
                         borderwidth=1,
                         focusthickness=3,
                         focuscolor='none')
+
         style.map('TButton', background=[('active', 'green')])
         self.causal_inference_button = ttk.Button(
             self.content,
@@ -87,6 +93,11 @@ class gui:
             self.content,
             text="Causal discovery",
             command=lambda: causal_algs.causal_discovery(self.progressBar))
+
+        self.edit_config = ttk.Button(
+            self.content,
+            text="Edit config",
+            command=lambda: edit_config_window_gui(self.top))
 
         self.exit_button = ttk.Button(self.content,
                                       text="exit",

@@ -9,10 +9,6 @@ from configurator import configurator
 
 
 class Causal_discovery:
-    """
-    It is only an algorithm, there is no data stored.
-    TODO: rename to: Causal_discovery_algs
-    """
 
     def calculate_pc(self, df):
         cg = pc(df.to_numpy())

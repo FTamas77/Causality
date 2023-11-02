@@ -2,54 +2,49 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "input_file_test": {
-      "type": "array",
-      "items": [
-        {
-          "type": "string"
-        }
-      ]
-    },
     "input_files": {
       "type": "array",
-      "items": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        }
-      ]
+      "items": {
+        "type": "string"
+      }
     },
-    "input_files_tmp": {
+    "input_files_2": {
       "type": "array",
-      "items": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        }
-      ]
+      "items": {
+        "type": "string"
+      }
+    },
+    "input_files_3": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "causal_discovery_keep_cols": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "causal_discovery_keep_cols_label": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "causal_inference_keep_cols": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
-  "required": ["input_file_test", "input_files", "input_files_tmp"]
+  "required": [
+    "input_files",
+    "input_files_2",
+    "input_files_3",
+    "causal_discovery_keep_cols",
+    "causal_discovery_keep_cols_label",
+    "causal_inference_keep_cols"
+  ]
 }
