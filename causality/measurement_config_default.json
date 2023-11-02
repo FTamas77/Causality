@@ -1,0 +1,45 @@
+{
+  "input_files": ["KV-41762_202301_test.xlsx"],
+  "input_files_2": [
+    "KV-41762_202301.xlsx",
+    "KV-41762_202302.xlsx",
+    "KV-41762_202303.xlsx",
+    "KV-41762_202304.xlsx"
+  ],
+  "input_files_3": [
+    "KV-41762_202301.xlsx",
+    "KV-41762_202302.xlsx",
+    "KV-41762_202303.xlsx",
+    "KV-41762_202304.xlsx",
+    "KV-41762_202305.xlsx",
+    "KV-41762_202306.xlsx",
+    "KV-41762_202307.xlsx",
+    "KV-41762_202308.xlsx"
+  ],
+  "causal_discovery_keep_cols": [
+    "teljesítmény",
+    "CO2 kibocsátás gkm V7",
+    "hengerűrtartalom",
+    "Elhaladási zaj dBA",
+    "Összevont átlagfogy",
+    "Korr abszorp együttható",
+    "kilométeróra állás",
+    "gy fogy ért orszúton"
+  ],
+  "causal_discovery_keep_cols_label": [
+    "Performance",
+    "CO2 emission",
+    "Cylinder cap.",
+    "Passing noise",
+    "Sum. consumption",
+    "Corr. abs. co.",
+    "Actual kilometers",
+    "Cons. on roads"
+  ],
+  "causal_inference_keep_cols": [
+    "teljesítmény",
+    "CO2 kibocsátás gkm V7",
+    "hengerűrtartalom",
+    "Elhaladási zaj dBA"
+  ]
+}
