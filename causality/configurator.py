@@ -44,8 +44,8 @@ class configurator:
     __instance = None
 
     def __reset(self):
-        if not configurator.__instance:
-            __instance.reset()
+        if configurator.__instance:
+            configurator.__instance.reset()
 
     def __init__(self):
         if not configurator.__instance:
