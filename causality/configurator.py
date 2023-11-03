@@ -3,6 +3,8 @@ import os
 import shutil
 from pathlib import Path
 
+from jsonschema import validate
+
 
 class configurator:
     __instance = None
@@ -10,6 +12,8 @@ class configurator:
     __ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
     __CONFIG_FILE = os.path.join(__ROOT_DIR, 'causality',
                                  'measurement_config.json')
+    __CONFIG_SCHEMA_FILE = os.path.join(__ROOT_DIR, 'causality',
+                                        'measurement_config_schema.json')
     __DEFAULT_CONFIG_FILE = os.path.join(__ROOT_DIR, 'causality',
                                          'measurement_config_default.json')
     __INPUT_DATA_DIR = os.path.join(__ROOT_DIR, 'dataset')
@@ -28,6 +32,17 @@ class configurator:
     def __get_config(self):
         with open(self.__CONFIG_FILE, encoding='utf-8') as json_file:
             data = json.load(json_file)
+
+        with open(self.__CONFIG_SCHEMA_FILE, encoding='utf-8') as json_file:
+            schema = json.load(json_file)
+
+        try:
+            validate(data, schema)
+        except jsonschema.ValidationError as e:
+            print(e.message)
+        except jsonschema.SchemaError as e:
+            print(e)
+
         return data
 
     def __reread(self):
