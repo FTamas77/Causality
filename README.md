@@ -1,19 +1,23 @@
 # Table of Contents
 
 - [Table of Contents](#table-of-contents)
-- [Dev environment](#dev-environment)
-- [Useful comments](#useful-comments)
+- [General](#general)
+  - [Dev environment](#dev-environment)
+  - [Useful comments](#useful-comments)
+  - [git](#git)
 - [Causality](#causality)
-- [Packaging](#packaging)
-- [Dataset](#dataset)
-- [Configuration](#configuration)
-- [GUI](#gui)
-- [git](#git)
+  - [Packaging](#packaging)
+  - [Applied dataset](#applied-dataset)
+  - [Configuration](#configuration)
 - [Ontology library](#ontology-library)
+- [Web](#web)
+- [Test](#test)
 
 ---
 
-# Dev environment
+# General
+
+## Dev environment
 
 * 3.10.6 seems to work with pygraphviz
   * Graphviz must be added to the path
@@ -21,7 +25,7 @@
   * On my work machine: `python -m pip install --use-pep517 --config-setting="--global-option=build_ext" --config-setting="--global-option=-IC:\Program Files\Graphviz\include" --config-setting="--global-option=-LC:\Program Files\Graphviz\lib" pygraphviz -vvv`
   * On my school machine: `pip install pygraphviz-1.9-cp310-cp310-win_amd64.whl` and this was downloaded from here: `https://www.lfd.uci.edu/~gohlke/pythonlibs/#pygraphviz`
 
-# Useful comments
+## Useful comments
 
 * **Create an environment to a specific python version:** `virtualenv causalityEnv3.10 -p python3.10`
 * **Activate the created environment:** `.\causalityEnv3.10\Scripts\activate`
@@ -29,32 +33,7 @@
 * **Install the package list:** `python -m pip install -r requirements3.10.txt`
 * **Deactivate the environment:** `deactivate`
 
-# Causality
-
-* Further technical/coding related notes [dev](./causality/dev.md).
-
-# Packaging
-
-* Create package [tutorial](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
-  * Build: `py -m build`
-* Test to upload [test_pypi](https://test.pypi.org/account/register/https://test.pypi.org/account/register/)
-  * Upload: `py -m twine upload --repository testpypi dist/*`
-
-# Dataset
-
-* Added as a submodule
-* [https://github.com/FTamas77/dataset](https://github.com/FTamas77/datasethttps:/)
-
-# Configuration
-
-* **Example:** measurement_config.json
-* **Schema:** measurement_config_schema.json
-
-# GUI
-
-* Tkinter
-
-# git
+## git
 
 * Create tag: `git tag `<tagname>
 * Push tags: `git push origin --tags`
@@ -64,8 +43,37 @@
   * git tag <tagname> <commitId>          # make a new tag locally
   * git push origin <tagname>             # push the new local tag to the remote 
 
+# Causality
+
+* Further technical/coding related notes [dev](./causality/dev.md).
+
+## Packaging
+
+* Create package [tutorial](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
+  * Build: `py -m build`
+* Test to upload [test_pypi](https://test.pypi.org/account/register/https://test.pypi.org/account/register/)
+  * Upload: `py -m twine upload --repository testpypi dist/*`
+
+## Applied dataset
+
+* Added as a submodule
+* [https://github.com/FTamas77/dataset](https://github.com/FTamas77/datasethttps:/)
+
+## Configuration
+
+* **Example:** measurement_config.json
+* **Schema:** measurement_config_schema.json
+
 # Ontology library
 
-* Dev details [here](./ontologyLib/dev.md).
-  * Note: python path must be set
+* Dev details [here](./ontology/dev.md)
+
+# Web
+
+* Dev details [here](./web/dev.md).
+
+# Test
+
+* Dev details [here](./test/dev.md).
+
 
