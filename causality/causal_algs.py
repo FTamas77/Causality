@@ -14,9 +14,7 @@ class causal_algs:
         l.print_log("Causal_inference is called")
         l.print_log("Reading input data started")
 
-        c = configurator()
-        df = data_reader.read_input_data(c.get_causal_inference_keep_cols(),
-                                         c.get_applied_input_files())
+        df = data_reader.read_input_data("Causal inference")
         progressBar.config(value=20)
         l.print_log("Reading input data completed")
 
@@ -51,9 +49,7 @@ class causal_algs:
         l.print_log("Discovery is called")
         l.print_log("Read the input data")
 
-        c = configurator()
-        df = data_reader.read_input_data(c.get_causal_discovery_keep_cols(),
-                                         c.get_applied_input_files())
+        df = data_reader.read_input_data("Causal discovery")
         l.print_log("Read the input data is done")
         progressBar.config(value=20)
 
