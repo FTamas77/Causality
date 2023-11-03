@@ -22,6 +22,7 @@ class Causal_discovery:
 
     def calculate_fci(self, df):
         g, edges = fci(df.to_numpy())
+
         c = configurator()
         pdy = GraphUtils.to_pydot(
             g, labels=c.get_causal_discovery_keep_cols_labels())
@@ -31,6 +32,7 @@ class Causal_discovery:
 
     def calculate_ges(self, df):
         Record = ges(df.to_numpy())
+
         c = configurator()
         pyd = GraphUtils.to_pydot(
             Record['G'], labels=c.get_causal_discovery_keep_cols_labels())
