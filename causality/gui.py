@@ -3,7 +3,8 @@ import tkinter as tk
 from tkinter import ttk
 
 from edit_config_window_gui import edit_config_window_gui
-from logger import logger
+
+import logger
 from causal_algs import causal_algs
 
 
@@ -88,8 +89,8 @@ class gui:
                                   height=11,
                                   width=50)
 
-        # TODO: we create it here, because it need variables, but it is a singleton
-        self.logger_obj = logger(self.top, self.outputtext)
+        # We have the needed components, so we can init logger
+        logger.init(self.top, self.outputtext)
 
         style.configure('TButton',
                         background='green',

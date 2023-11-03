@@ -1,6 +1,7 @@
 from causal_inference import Causal_inference
 from causal_discovery import Causal_discovery
-from logger import logger as l
+
+import logger
 from configurator import configurator
 from data_reader import data_reader
 
@@ -10,7 +11,8 @@ class causal_algs:
     @staticmethod
     def causal_inference(progressBar):
 
-        #l = logger.get_instance()
+        l = logger.logger
+
         l.print_log("Causal_inference is called")
         l.print_log("Reading input data started")
 
@@ -45,7 +47,8 @@ class causal_algs:
     @staticmethod
     def causal_discovery(progressBar):
 
-        #l = logger.get_instance()
+        l = logger.logger
+
         l.print_log("Discovery is called")
         l.print_log("Read the input data")
 
