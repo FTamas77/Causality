@@ -1,4 +1,3 @@
-## Test
+# General notes:
 
-* Run tests: `py.test`
-* Usage of pythonpath: [example](https://docs.pytest.org/en/7.0.x/reference/reference.html#confval-pythonpath)
+owlready2.JAVA_EXE = "C:\\Program Files\\Java\\jre1.8.0_351\\bin\\java.exe"

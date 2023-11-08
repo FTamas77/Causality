@@ -5,14 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "web",
+      "name": "ontology",
       "type": "python",
       "request": "launch",
-      "module": "web",
-      "justMyCode": true
+      "module": "ontology",
+      "justMyCode": true,
+      "env": {
+        "PYTHONPATH": "d:/Projects/Causality/ontology"
+      }
     },
     {
-      "name": "pytest_ontology",
+      "name": "test_ontology",
       "type": "python",
       "request": "launch",
       "module": "pytest",
@@ -20,7 +23,7 @@
       "args": ["-k", "test_ontology"]
     },
     {
-      "name": "pytest_causality",
+      "name": "test_causality",
       "type": "python",
       "request": "launch",
       "module": "pytest",
@@ -28,15 +31,7 @@
       "args": ["-k", "test_causality"]
     },
     {
-      "name": "pytest_web",
-      "type": "python",
-      "request": "launch",
-      "module": "pytest",
-      "justMyCode": true,
-      "args": ["-k", "test_web"]
-    },
-    {
-      "name": "causality_gui",
+      "name": "causality",
       "type": "python",
       "request": "launch",
       "module": "causality",

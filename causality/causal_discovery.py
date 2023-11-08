@@ -37,5 +37,8 @@ class Causal_discovery:
         pyd = GraphUtils.to_pydot(
             Record['G'], labels=c.get_causal_discovery_keep_cols_labels())
 
+        # TODO: we need text to pass to the ontology
+        #print(pyd)
+
         GES_FILE = os.path.join(c.get_ROOT_DIR(), 'doc', 'ges.png')
         pyd.write_png(GES_FILE)
