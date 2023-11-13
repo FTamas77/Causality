@@ -20,7 +20,7 @@
       "request": "launch",
       "module": "pytest",
       "justMyCode": true,
-      "args": ["-k", "test_ontology"]
+      "args": ["tests/test_ontology.py"]
     },
     {
       "name": "test_causality",
@@ -28,7 +28,7 @@
       "request": "launch",
       "module": "pytest",
       "justMyCode": true,
-      "args": ["-k", "test_causality"]
+      "args": ["tests/test_causality.py"]
     },
     {
       "name": "causality",

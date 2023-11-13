@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from edit_config_window_gui import edit_config_window_gui
+from edit_model_window_gui import edit_model_window_gui
 
 import logger
 from causal_algs import causal_algs
@@ -19,6 +20,7 @@ class gui:
         self.causal_inference_button = None
         self.causal_discovery_button = None
         self.edit_config = None
+        self.edit_model = None
         self.exit_button = None
 
         self.content = None
@@ -42,16 +44,18 @@ class gui:
 
         self.edit_config.grid(column=0, row=4, sticky=(N, W), pady=5)
 
-        self.exit_button.grid(column=0, row=5, sticky=(N, W), pady=5)
+        self.edit_model.grid(column=0, row=5, sticky=(N, W), pady=5)
+
+        self.exit_button.grid(column=0, row=6, sticky=(N, W), pady=5)
 
         self.progressBar.grid(column=0,
-                              row=6,
+                              row=7,
                               columnspan=2,
                               sticky=(N, W),
                               pady=5)
 
         self.outputtext.grid(column=0,
-                             row=7,
+                             row=8,
                              columnspan=2,
                              sticky='NSWE',
                              padx=5,
@@ -115,6 +119,11 @@ class gui:
             self.content,
             text="Edit config",
             command=lambda: edit_config_window_gui(self.top))
+
+        self.edit_model = ttk.Button(
+            self.content,
+            text="Edit model",
+            command=lambda: edit_model_window_gui(self.top))
 
         self.exit_button = ttk.Button(self.content,
                                       text="Exit",

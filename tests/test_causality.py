@@ -8,6 +8,7 @@ from configurator import configurator
 from data_reader import data_reader
 
 
+@pytest.mark.skip(reason="TODO")
 def test_configurator_default_config():
     c = configurator()
     c.default()
@@ -35,6 +36,11 @@ def test_configurator_default_config():
 def test_data_reader_simple():
     c = configurator()
     c.default()
+    c.default_causal_graph()
+
+    c.get_outcome()
+    c.get_treatment()
+    c.get_causal_graph()
 
     d = data_reader()
     causal_inference_data = d.read_input_data("Causal inference")

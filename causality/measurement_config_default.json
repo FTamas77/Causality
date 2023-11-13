@@ -1,5 +1,6 @@
 {
   "input_files": ["KV-41762_202301_test.xlsx"],
+
   "input_files_2": [
     "KV-41762_202301.xlsx",
     "KV-41762_202302.xlsx",
@@ -36,6 +37,8 @@
     "Actual kilometers",
     "Cons. on roads"
   ],
+  "treatment": "teljesítmény",
+  "outcome": "CO2 kibocsátás gkm V7",
   "causal_inference_keep_cols": [
     "teljesítmény",
     "CO2 kibocsátás gkm V7",

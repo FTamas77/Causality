@@ -4,9 +4,12 @@ import dowhy
 
 import os
 from pathlib import Path
+
+import matplotlib.pyplot as plt
 import matplotlib
 
 from utils import scatter_plot_with_correlation_line
+from configurator import configurator
 
 matplotlib.use("TKAgg")
 
@@ -17,36 +20,30 @@ class Causal_inference:
         """
         https://en.wikipedia.org/wiki/Graph_Modelling_Language
         """
-        graph = """graph    [
-                                            directed 1    
-                                            node [id "hengerűrtartalom" label "hengerűrtartalom"]
-                                            node [id "teljesítmény" label "teljesítmény"]
-                                            node [id "Elhaladási zaj dBA" label "Elhaladási zaj dBA"]
-                                            node [id "CO2 kibocsátás gkm V7" label "CO2 kibocsátás gkm V7"]
-                                            edge [source "hengerűrtartalom" target "teljesítmény"]
-                                            edge [source "hengerűrtartalom" target "CO2 kibocsátás gkm V7"]
-                                            edge [source "teljesítmény" target "Elhaladási zaj dBA"]
-                                            edge [source "teljesítmény" target "CO2 kibocsátás gkm V7"]
-                                            edge [source "Elhaladási zaj dBA" target "CO2 kibocsátás gkm V7"]
-                            ]"""
+
+        c = configurator()
+
+        graph = c.get_causal_graph()
 
         model = CausalModel(
             data=df,
-            treatment="teljesítmény",
-            outcome="CO2 kibocsátás gkm V7",
+            treatment=c.get_treatment(),
+            outcome=c.get_outcome(),
             graph=graph,
         )
 
         # Figure 1.
         # use checkbox to enable or disable it, or config file
-        scatter_plot_with_correlation_line(df['teljesítmény'],
-                                           df["CO2 kibocsátás gkm V7"])
+        scatter_plot_with_correlation_line(df[c.get_treatment()],
+                                           df[c.get_outcome()])
 
         # Figure 2.
-        # plt.figure("Fig. 2. Manually created input causal graph")
-        # CAUSAL_MODEL_FILE = os.path.join(ROOT_DIR, 'doc', 'causal_input_graph')
-        # model.view_model(layout="dot", file_name=CAUSAL_MODEL_FILE)
-        # plt.close()
+        plt.figure("Fig. 2. Manually created input causal graph")
+        c = configurator()
+        CAUSAL_MODEL_FILE = os.path.join(c.get_ROOT_DIR(), 'doc',
+                                         'causal_input_graph')
+        model.view_model(layout="dot", file_name=CAUSAL_MODEL_FILE)
+        plt.close()
 
         return model
 
