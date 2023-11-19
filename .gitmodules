@@ -1,3 +1,7 @@
 [submodule "dataset"]
 	path = dataset
 	url = https://github.com/FTamas77/dataset.git
+
+[submodule "tigramite"]
+	path = tigramite
+	url = https://github.com/jakobrunge/tigramite
