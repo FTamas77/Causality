@@ -2,29 +2,45 @@ from owlready2 import *
 import os
 
 owlready2.JAVA_EXE = "C:\\Program Files\\Java\\jre1.8.0_351\\bin\\java.exe"
-
-onto = get_ontology("ontology/caseStudy.owl").load()
+onto_path.append(".")
+onto = get_ontology("ontology/onto.owl")
 onto.load(reload=True)
 
-print('\n\nList of the imported ontologies:\n', list(onto.imported_ontologies))
-print('\n\nList of the individuals:\n', list(onto.individuals()))
-print('\n\nList of the classes:\n', list(onto.classes()))
-print('\n\nList of the properties:\n', list(onto.properties()))
-print('\n\nList of the object_properties:\n', list(onto.object_properties()))
-print('\n\nList of the data_properties:\n', list(onto.data_properties()))
-print('\n\nList of the annotation_properties:\n',
-      list(onto.annotation_properties()))
-print('\n\nList of the disjoints:\n', list(onto.disjoints()))
-print('\n\nList of the disjoint_classes:\n', list(onto.disjoint_classes()))
-print('\n\nList of the disjoint_properties:\n',
-      list(onto.disjoint_properties()))
-print('\n\nList of the different_individuals:\n',
-      list(onto.different_individuals()))
-print('\n\nList of the rules:\n', list(onto.rules()))
-print('\n\nList of the variables:\n', list(onto.variables()))
 
-# subject - verb - object
-print('\n\niri and name and is_a:\n')
-print(onto.LifeCycleEnergySource_Renewable_ICEV_vehicle_1.iri)
-print(onto.LifeCycleEnergySource_Renewable_ICEV_vehicle_1.name)
-print(onto.LifeCycleEnergySource_Renewable_ICEV_vehicle_1.is_a)
+# TODO: move into a separate file
+class ontology_handler:
+
+    #def openOntology(self):
+    #self.onto = get_ontology("ontology/onto.owl")
+    #self.onto.load(reload=True)
+
+    #def createOntology(self):
+    #self.onto = get_ontology("http://myonto.org/onto.owl")
+    #self.onto.save(file="ontology/onto.owl", format="rdfxml")
+
+    def addClasses(self, myList):
+        print(Thing)
+
+        my_new_class = types.new_class("NewClassName", (Thing, ))
+        print(my_new_class)
+
+        my_obj = my_new_class("myObjName", namespace=onto)  # make an instance
+        print(my_obj)  # qwerty.myObjName
+
+        return
+
+
+# for dewvelopment
+if __name__ == '__main__':
+    myList = []
+    myList.append([
+        'Fuel_consumptions_liters_value'
+        'Co2_emissions', 'Active_cylinders', 'Engine_powers_out',
+        'Motor_p1_maximum_powers', 'Engine_temperature_derivatives',
+        'Motor_p0_speeds', 'Engine_temperatures', 'Wheel_speeds', 'Velocities',
+        'Times'
+    ])
+
+    myOntology = ontology_handler()
+    myOntology.openOntology()
+    myOntology.addClasses(myList)

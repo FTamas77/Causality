@@ -9,6 +9,7 @@
 - [Causality package](#causality-package)
   - [Configuration](#configuration)
 - [Ontology package](#ontology-package)
+- [CO2MPAS sim](#co2mpas-sim)
 - [Test](#test)
 
 ---
@@ -75,6 +76,12 @@ Setting up:
 # Ontology package
 
 * Dev details [here](./ontology/dev.md)
+
+---
+
+# CO2MPAS sim
+
+* Dev details [here](./co2mpas/dev.md)
 
 ---
 

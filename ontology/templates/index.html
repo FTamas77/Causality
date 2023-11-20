@@ -1,12 +1,13 @@
 <html>
   <head>
-    <script
-      type="text/javascript"
-      src="{{ url_for('static', filename = 'hello.js') }}"
-    ></script>
+    <title>Graph</title>
   </head>
-
   <body>
-    <input type="button" onclick="sayHello()" value="Say Hello" />
+    <h1>Graph</h1>
+    <img
+      src="{{ url_for('webui_blueprint.graph', nodes=nodes) }}"
+      alt="Complete Graph with {{ nodes }} nodes"
+      height="200"
+    />
   </body>
 </html>
