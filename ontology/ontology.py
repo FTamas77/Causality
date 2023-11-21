@@ -7,16 +7,7 @@ onto = get_ontology("ontology/onto.owl")
 onto.load(reload=True)
 
 
-# TODO: move into a separate file
 class ontology_handler:
-
-    #def openOntology(self):
-    #self.onto = get_ontology("ontology/onto.owl")
-    #self.onto.load(reload=True)
-
-    #def createOntology(self):
-    #self.onto = get_ontology("http://myonto.org/onto.owl")
-    #self.onto.save(file="ontology/onto.owl", format="rdfxml")
 
     def addClasses(self, myList):
         print(Thing)
@@ -24,13 +15,12 @@ class ontology_handler:
         my_new_class = types.new_class("NewClassName", (Thing, ))
         print(my_new_class)
 
-        my_obj = my_new_class("myObjName", namespace=onto)  # make an instance
-        print(my_obj)  # qwerty.myObjName
+        my_obj = my_new_class("myObjName", namespace=onto)
+        print(my_obj)
 
         return
 
 
-# for dewvelopment
 if __name__ == '__main__':
     myList = []
     myList.append([
