@@ -160,4 +160,5 @@ cython_debug/
 #.idea/
 
 myEnv
-/co2mpas/cache_plot
+co2mpas/cache_plot
+tigramite

@@ -2,6 +2,7 @@
 
 https://co2mpas.readthedocs.io/en/stable/quick.html
 
+Run command:
 co2mpas run ./input/co2mpas_conventional.xlsx -O ./output -PL
 
 # Notes:
