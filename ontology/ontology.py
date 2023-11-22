@@ -46,16 +46,6 @@ with onto:
     class hasPhysicalModel(Measurement >> PhysicalModel, ObjectProperty):
         pass
 
-    # TODO: the possible parameters
-    class PhysicalParameter(Thing):
-        pass
-
-    class has_value(PhysicalParameter >> float, FunctionalProperty):
-        pass
-
-    class has_time(PhysicalParameter >> float, FunctionalProperty):
-        pass
-
     ###################
     ##### model 1 #####
     ###################
@@ -64,7 +54,7 @@ with onto:
         pass
 
     # actual value 1
-    class fuel_consumptions_liters_value(PhysicalParameter):
+    class fuel_consumptions_liters_value(co2_model):
         pass
 
     class has_fuel_consumptions_liters_value(
@@ -73,7 +63,7 @@ with onto:
         pass
 
     # actual value 2
-    class co2_emissions(PhysicalParameter):
+    class co2_emissions(co2_model):
         pass
 
     class has_fuel_consumptions_liters_value(
@@ -89,21 +79,21 @@ with onto:
         pass
 
     # actual value 1
-    class active_cylinders(PhysicalParameter):
+    class active_cylinders(engine_model):
         pass
 
     class has_active_cylinders(engine_model >> active_cylinders, ObjectProperty):
         pass
 
     # actual value 2
-    class engine_powers_out(PhysicalParameter):
+    class engine_powers_out(engine_model):
         pass
 
     class has_engine_powers_out(engine_model >> engine_powers_out, ObjectProperty):
         pass
 
     # actual value 3
-    class engine_temperature_derivatives(PhysicalParameter):
+    class engine_temperature_derivatives(engine_model):
         pass
 
     class has_engine_temperature_derivatives(
@@ -119,7 +109,7 @@ with onto:
         pass
 
     # actual value 1
-    class motor_p1_maximum_powers(PhysicalParameter):
+    class motor_p1_maximum_powers(electric_model):
         pass
 
     class has_engine_temperature_derivatives(
@@ -128,7 +118,7 @@ with onto:
         pass
 
     # actual value 2
-    class motor_p0_speeds(PhysicalParameter):
+    class motor_p0_speeds(electric_model):
         pass
 
     class has_motor_p0_speeds(electric_model >> motor_p0_speeds, ObjectProperty):
@@ -142,7 +132,7 @@ with onto:
         pass
 
     # actual value 1
-    class engine_temperatures(PhysicalParameter):
+    class engine_temperatures(control_model):
         pass
 
     class has_engine_temperatures(control_model >> engine_temperatures, ObjectProperty):
@@ -156,18 +146,36 @@ with onto:
         pass
 
     # actual value 1
-    class wheel_speeds(PhysicalParameter):
+    class wheel_speeds(wheel_model):
         pass
 
     class has_wheel_speeds(wheel_model >> wheel_speeds, ObjectProperty):
         pass
 
     # actual value 2
-    class velocities(PhysicalParameter):
+    class velocities(wheel_model):
         pass
 
     class has_velocities(wheel_model >> velocities, ObjectProperty):
         pass
+
+    ############################
+    ##### model parameters #####
+    ############################
+
+    # https://stackoverflow.com/questions/70061671/how-to-define-multiple-domains-in-owlready2
+    # https://stackoverflow.com/questions/77529594/owlready2-create-functionalproperty-to-multiple-classes
+    class has_value(FunctionalProperty):
+        domain = [
+            Or([wheel_speeds, control_model, electric_model, engine_model, co2_model])
+        ]
+        range = [float]
+
+    class has_time(FunctionalProperty):
+        domain = [
+            Or([wheel_speeds, control_model, electric_model, engine_model, co2_model])
+        ]
+        range = [float]
 
 
 # TODO: create separate ontology handler file
