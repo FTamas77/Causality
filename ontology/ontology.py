@@ -8,8 +8,6 @@ onto_path.append(".")
 # https://stackoverflow.com/questions/66965475/creating-an-instance-in-owlready2-creates-a-completely-new-class-instead-of-asig
 # IRI must be formatted as a link - even if it's a fake one. For example, if IRI is "http://test.org/new.owl", my code works perfectly.
 onto = get_ontology("http://test.org/new.owl")
-# onto = get_ontology("ontology/co2mpas.owl")
-# we always create a new ontology
 # onto = get_ontology("ontology/co2mpas.owl").load()
 
 
@@ -46,6 +44,9 @@ with onto:
     class hasPhysicalModel(Measurement >> PhysicalModel, ObjectProperty):
         pass
 
+    class PhysicalParameter(Thing):
+        pass
+
     ###################
     ##### model 1 #####
     ###################
@@ -54,18 +55,20 @@ with onto:
         pass
 
     # actual value 1
-    class fuel_consumptions_liters_value(co2_model):
+    class fuel_consumptions_liters_value(PhysicalParameter):
         pass
 
+    # connect the model and the lowes parameter: co2_model >> fuel_consumptions_liters_value
     class has_fuel_consumptions_liters_value(
         co2_model >> fuel_consumptions_liters_value, ObjectProperty
     ):
         pass
 
     # actual value 2
-    class co2_emissions(co2_model):
+    class co2_emissions(PhysicalParameter):
         pass
 
+    # connect the model and the lowes parameter: co2_model >> co2_emissions
     class has_fuel_consumptions_liters_value(
         co2_model >> co2_emissions, ObjectProperty
     ):
@@ -79,23 +82,26 @@ with onto:
         pass
 
     # actual value 1
-    class active_cylinders(engine_model):
+    class active_cylinders(PhysicalParameter):
         pass
 
+    #  connect the model and the lowes parameter: engine_model >> active_cylinders
     class has_active_cylinders(engine_model >> active_cylinders, ObjectProperty):
         pass
 
     # actual value 2
-    class engine_powers_out(engine_model):
+    class engine_powers_out(PhysicalParameter):
         pass
 
+    #  connect the model and the lowes parameter: engine_model >> engine_powers_out
     class has_engine_powers_out(engine_model >> engine_powers_out, ObjectProperty):
         pass
 
     # actual value 3
-    class engine_temperature_derivatives(engine_model):
+    class engine_temperature_derivatives(PhysicalParameter):
         pass
 
+    # connect the model and the lowes parameter: engine_model >> engine_temperature_derivatives
     class has_engine_temperature_derivatives(
         engine_model >> engine_temperature_derivatives, ObjectProperty
     ):
@@ -109,7 +115,7 @@ with onto:
         pass
 
     # actual value 1
-    class motor_p1_maximum_powers(electric_model):
+    class motor_p1_maximum_powers(PhysicalParameter):
         pass
 
     class has_engine_temperature_derivatives(
@@ -118,7 +124,7 @@ with onto:
         pass
 
     # actual value 2
-    class motor_p0_speeds(electric_model):
+    class motor_p0_speeds(PhysicalParameter):
         pass
 
     class has_motor_p0_speeds(electric_model >> motor_p0_speeds, ObjectProperty):
@@ -132,7 +138,7 @@ with onto:
         pass
 
     # actual value 1
-    class engine_temperatures(control_model):
+    class engine_temperatures(PhysicalParameter):
         pass
 
     class has_engine_temperatures(control_model >> engine_temperatures, ObjectProperty):
@@ -146,14 +152,14 @@ with onto:
         pass
 
     # actual value 1
-    class wheel_speeds(wheel_model):
+    class wheel_speeds(PhysicalParameter):
         pass
 
     class has_wheel_speeds(wheel_model >> wheel_speeds, ObjectProperty):
         pass
 
     # actual value 2
-    class velocities(wheel_model):
+    class velocities(PhysicalParameter):
         pass
 
     class has_velocities(wheel_model >> velocities, ObjectProperty):
@@ -165,15 +171,42 @@ with onto:
 
     # https://stackoverflow.com/questions/70061671/how-to-define-multiple-domains-in-owlready2
     # https://stackoverflow.com/questions/77529594/owlready2-create-functionalproperty-to-multiple-classes
-    class has_value(FunctionalProperty):
+    # the superclass is PhysicalParameter
+    class has_value(DataProperty):
         domain = [
-            Or([wheel_speeds, control_model, electric_model, engine_model, co2_model])
+            Or(
+                [
+                    wheel_speeds,
+                    velocities,
+                    engine_temperatures,
+                    motor_p0_speeds,
+                    motor_p1_maximum_powers,
+                    engine_temperature_derivatives,
+                    engine_powers_out,
+                    active_cylinders,
+                    co2_emissions,
+                    fuel_consumptions_liters_value,
+                ]
+            )
         ]
         range = [float]
 
-    class has_time(FunctionalProperty):
+    class has_time(DataProperty):
         domain = [
-            Or([wheel_speeds, control_model, electric_model, engine_model, co2_model])
+            Or(
+                [
+                    wheel_speeds,
+                    velocities,
+                    engine_temperatures,
+                    motor_p0_speeds,
+                    motor_p1_maximum_powers,
+                    engine_temperature_derivatives,
+                    engine_powers_out,
+                    active_cylinders,
+                    co2_emissions,
+                    fuel_consumptions_liters_value,
+                ]
+            )
         ]
         range = [float]
 
@@ -208,14 +241,35 @@ if __name__ == "__main__":
     co2_model_1 = co2_model()  # it is a "PhysicalModel"
     Measurement_1.hasPhysicalModel = [co2_model_1]
 
-    fuel_consumptions_liters_value_1 = fuel_consumptions_liters_value()
-    co2_model_1.has_fuel_consumptions_liters_value = [fuel_consumptions_liters_value_1]
+    # measurements, add dataproperties as parameters
+    fuel_consumptions_liters_value(has_value=[5], has_time=[6])
+    fuel_consumptions_liters_value(has_value=[7], has_time=[8])
+    fuel_consumptions_liters_value(has_value=[9], has_time=[10])
+    fuel_consumptions_liters_value(has_value=[11], has_time=[12])
 
-    fuel_consumptions_liters_value_1.has_value = 5
-    fuel_consumptions_liters_value_1.has_time = 5
-
-    my_ontology_handler = ontology_handler()
-    my_ontology_handler.ontology_builder(myList)
+    print("print the instances of the class:\n")
+    for i in fuel_consumptions_liters_value.instances():
+        print(i)
 
     # Now, we don't want to save it into a file
-    onto.save(file="ontology/co2mpas.owl", format="rdfxml")
+    # onto.save(file="ontology/co2mpas.owl", format="rdfxml")
+
+    ###############################
+    # Sample queries using SPARQL #
+    ###############################
+
+    ret = list(
+        default_world.sparql(
+            """
+                            SELECT ?prop_value
+                            WHERE {   
+                                ?inst a new:fuel_consumptions_liters_value .
+                                ?inst new:has_value ?prop_value .
+                            }
+                
+            """
+        )
+    )
+
+    for triple in ret:
+        print(triple)
