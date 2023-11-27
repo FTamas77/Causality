@@ -5,13 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "ontology",
+      "name": "ontology_backend",
       "type": "python",
       "request": "launch",
-      "module": "ontology",
+      "module": "ontology_backend",
       "justMyCode": true,
       "env": {
-        "PYTHONPATH": "d:/Projects/Causality/ontology"
+        "PYTHONPATH": "d:/Projects/Causality/ontology_backend"
       }
     },
     {
@@ -31,13 +31,13 @@
       "args": ["tests/test_causality.py"]
     },
     {
-      "name": "causality",
+      "name": "causality_lib",
       "type": "python",
       "request": "launch",
       "module": "causality",
       "justMyCode": true,
       "env": {
-        "PYTHONPATH": "d:/Projects/Causality/causality"
+        "PYTHONPATH": "d:/Projects/Causality/causality_lib"
       }
     }
   ]
