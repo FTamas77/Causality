@@ -34,7 +34,7 @@
       "name": "causality_lib",
       "type": "python",
       "request": "launch",
-      "module": "causality",
+      "module": "causality_lib",
       "justMyCode": true,
       "env": {
         "PYTHONPATH": "d:/Projects/Causality/causality_lib"
