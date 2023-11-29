@@ -10,6 +10,19 @@ onto_path.append(".")
 onto = get_ontology("http://test.org/new.owl")
 # onto = get_ontology("ontology/co2mpas.owl").load()
 
+# default parameters, now the web uses it
+selected_parameters = [
+    {"name": "wheel_speeds", "active": True},
+    {"name": "velocities", "active": True},
+    {"name": "engine_temperatures", "active": True},
+    {"name": "motor_p0_speeds", "active": True},
+    {"name": "motor_p1_maximum_powers", "active": True},
+    {"name": "engine_temperature_derivatives", "active": True},
+    {"name": "engine_powers_out", "active": True},
+    {"name": "active_cylinders", "active": True},
+    {"name": "co2_emissions", "active": True},
+    {"name": "fuel_consumptions_liters_value", "active": True},
+]
 
 with onto:
 

@@ -2,36 +2,34 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-10">
-        <h1>Books</h1>
+        <h1>Build ontology for causal AI</h1>
         <hr><br><br>
         <alert_comp :message="message" v-if="showMessage"></alert_comp>
-        <button type="button" class="btn btn-success btn-sm" @click="toggleAddBookModal">
-          Add Book
+        <button type="button" class="btn btn-success btn-sm" @click="toggleAddParameterModal">
+          Add Parameter
         </button>
         <br><br>
         <table class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Title</th>
-              <th scope="col">Author</th>
-              <th scope="col">Read?</th>
+              <th scope="col">Parameter</th>
+              <th scope="col">Active</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(book, index) in books" :key="index">
-              <td>{{ book.title }}</td>
-              <td>{{ book.author }}</td>
+            <tr v-for="(parameter, index) in selected_parameters" :key="index">
+              <td>{{ parameter.name }}</td>
               <td>
-                <span v-if="book.read">Yes</span>
+                <span v-if="parameter.active">Yes</span>
                 <span v-else>No</span>
               </td>
               <td>
                 <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-warning btn-sm" @click="toggleEditBookModal(book)">
+                  <button type="button" class="btn btn-warning btn-sm" @click="toggleEditParameterModal(parameter)">
                     Update
                   </button>
-                  <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteBook(book)">
+                  <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteParameter(parameter)">
                     Delete
                   </button>
                 </div>
@@ -42,32 +40,27 @@
       </div>
     </div>
 
-    <!-- add new book modal -->
-    <div ref="addBookModal" class="modal fade" :class="{ show: activeAddBookModal, 'd-block': activeAddBookModal }"
-      tabindex="-1" role="dialog">
+    <!-- add new parameter modal -->
+    <div ref="addParameterModal" class="modal fade"
+      :class="{ show: activeAddParameterModal, 'd-block': activeAddParameterModal }" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add a new book</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddBookModal">
+            <h5 class="modal-title">Add a new parameter</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddParameterModal">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="addBookTitle" class="form-label">Title:</label>
-                <input type="text" class="form-control" id="addBookTitle" v-model="addBookForm.title"
-                  placeholder="Enter title">
-              </div>
-              <div class="mb-3">
-                <label for="addBookAuthor" class="form-label">Author:</label>
-                <input type="text" class="form-control" id="addBookAuthor" v-model="addBookForm.author"
-                  placeholder="Enter author">
+                <label for="addParameterName" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="addParameterName" v-model="addParameterForm.name"
+                  placeholder="Enter name">
               </div>
               <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="addBookRead" v-model="addBookForm.read">
-                <label class="form-check-label" for="addBookRead">Read?</label>
+                <input type="checkbox" class="form-check-input" id="addParameterRead" v-model="addParameterForm.active">
+                <label class="form-check-label" for="addParameterRead">Active</label>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleAddSubmit">
@@ -82,34 +75,29 @@
         </div>
       </div>
     </div>
-    <div v-if="activeAddBookModal" class="modal-backdrop fade show"></div>
+    <div v-if="activeAddParameterModal" class="modal-backdrop fade show"></div>
 
-    <!-- edit book modal -->
-    <div ref="editBookModal" class="modal fade" :class="{ show: activeEditBookModal, 'd-block': activeEditBookModal }"
-      tabindex="-1" role="dialog">
+    <!-- edit parameter modal -->
+    <div ref="editParameterModal" class="modal fade"
+      :class="{ show: activeEditParameterModal, 'd-block': activeEditParameterModal }" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Update</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleEditBookModal">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleEditParameterModal">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="editBookTitle" class="form-label">Title:</label>
-                <input type="text" class="form-control" id="editBookTitle" v-model="editBookForm.title"
-                  placeholder="Enter title">
-              </div>
-              <div class="mb-3">
-                <label for="editBookAuthor" class="form-label">Author:</label>
-                <input type="text" class="form-control" id="editBookAuthor" v-model="editBookForm.author"
-                  placeholder="Enter author">
+                <label for="editParameterName" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="editParameterName" v-model="editParameterForm.name"
+                  placeholder="Enter name">
               </div>
               <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="editBookRead" v-model="editBookForm.read">
-                <label class="form-check-label" for="editBookRead">Read?</label>
+                <input type="checkbox" class="form-check-input" id="editParameterRead" v-model="editParameterForm.active">
+                <label class="form-check-label" for="editParameterRead">Active</label>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">
@@ -124,7 +112,7 @@
         </div>
       </div>
     </div>
-    <div v-if="activeEditBookModal" class="modal-backdrop fade show"></div>
+    <div v-if="activeEditParameterModal" class="modal-backdrop fade show"></div>
 
   </div>
 </template>
@@ -136,21 +124,18 @@ import Alert from './Alert.vue';
 export default {
   data() {
     return {
-      activeAddBookModal: false,
-      addBookForm: {
-        title: '',
-        author: '',
-        read: [],
+      activeAddParameterModal: false,
+      addParameterForm: {
+        name: '',
+        active: '',
       },
-      books: [],
+      selected_parameters: [],
       message: '',
       showMessage: false,
-      activeEditBookModal: false,
-      editBookForm: {
-        id: '',
-        title: '',
-        author: '',
-        read: [],
+      activeEditParameterModal: false,
+      editParameterForm: {
+        name: '',
+        active: ''
       },
     };
   },
@@ -158,27 +143,26 @@ export default {
     alert_comp: Alert,
   },
   methods: {
-    addBook(payload) {
+    addParameter(payload) {
       const path = 'http://127.0.0.1:5000/ontology';
       axios.post(path, payload)
         .then(() => {
-          this.getBooks();
-          this.message = 'Book added!';
+          this.getParameters();
+          this.message = 'Parameter added!';
           this.showMessage = true;
         })
         .catch((error) => {
           console.log(error);
-          this.getBooks();
+          this.getParameters();
         });
     },
-    getBooks() {
+    getParameters() {
       const path = 'http://127.0.0.1:5000/ontology';
       axios.get(path)
         .then((res) => {
-          this.books = res.data.books;
+          this.selected_parameters = res.data.parameters;
         })
         .catch((error) => {
-
           console.error(error);
         });
     },
@@ -186,98 +170,92 @@ export default {
       this.initForm();
     },
     handleAddSubmit() {
-      this.toggleAddBookModal();
-      let read = false;
-      if (this.addBookForm.read[0]) {
-        read = true;
+      this.toggleAddParameterModal();
+      let active = false;
+      if (this.addParameterForm.active[0]) {
+        active = true;
       }
       const payload = {
-        title: this.addBookForm.title,
-        author: this.addBookForm.author,
-        read, // property shorthand
+        name: this.addParameterForm.name,
+        active,
       };
-      this.addBook(payload);
+      this.addParameter(payload);
       this.initForm();
     },
     initForm() {
-      this.addBookForm.title = '';
-      this.addBookForm.author = '';
-      this.addBookForm.read = [];
-      this.editBookForm.id = '';
-      this.editBookForm.title = '';
-      this.editBookForm.author = '';
-      this.editBookForm.read = [];
+      this.addParameterForm.name = '';
+      this.addParameterForm.active = [];
+      this.editParameterForm.name = '';
+      this.editParameterForm.active = [];
     },
-    toggleAddBookModal() {
+    toggleAddParameterModal() {
       const body = document.querySelector('body');
-      this.activeAddBookModal = !this.activeAddBookModal;
-      if (this.activeAddBookModal) {
+      this.activeAddParameterModal = !this.activeAddParameterModal;
+      if (this.activeAddParameterModal) {
         body.classList.add('modal-open');
       } else {
         body.classList.remove('modal-open');
       }
     },
-    toggleEditBookModal(book) {
-      if (book) {
-        this.editBookForm = book;
+    toggleEditParameterModal(parameter) {
+      if (parameter) {
+        this.editParameterForm = parameter;
       }
       const body = document.querySelector('body');
-      this.activeEditBookModal = !this.activeEditBookModal;
-      if (this.activeEditBookModal) {
+      this.activeEditParameterModal = !this.activeEditParameterModal;
+      if (this.activeEditParameterModal) {
         body.classList.add('modal-open');
       } else {
         body.classList.remove('modal-open');
       }
     },
     handleEditSubmit() {
-      this.toggleEditBookModal(null);
+      this.toggleEditParameterModal(null);
       let read = false;
-      if (this.editBookForm.read) read = true;
+      if (this.editParameterForm.active) active = true;
       const payload = {
-        title: this.editBookForm.title,
-        author: this.editBookForm.author,
-        read,
+        name: this.editParameterForm.name,
+        active,
       };
-      this.updateBook(payload, this.editBookForm.id);
+      this.updateParameter(payload, this.editParameterForm.name);
     },
-    updateBook(payload, bookID) {
-      const path = `http://127.0.0.1:5000/ontology/${bookID}`;
+    updateParameter(payload, ParameterID) {
+      const path = `http://127.0.0.1:5000/ontology/${par_name}`;
       axios.put(path, payload)
         .then(() => {
-          this.getBooks();
-          this.message = 'Book updated!';
+          this.getParameters();
+          this.message = 'Parameter updated!';
           this.showMessage = true;
         })
         .catch((error) => {
           console.error(error);
-          this.getBooks();
+          this.getParameters();
         });
     },
     handleEditCancel() {
-      this.toggleEditBookModal(null);
+      this.toggleEditParameterModal(null);
       this.initForm();
-      this.getBooks(); // why?
+      this.getParameters();
     },
-    handleDeleteBook(book) {
-      this.removeBook(book.id);
+    handleDeleteParameter(parameter) {
+      this.removeParameter(parameter.name);
     },
-    removeBook(bookID) {
-      const path = `http://127.0.0.1:5000/ontology/${bookID}`;
+    removeParameter(par_name) {
+      const path = `http://127.0.0.1:5000/ontology/${par_name}`;
       axios.delete(path)
         .then(() => {
-          this.getBooks();
-          this.message = 'Book removed!';
+          this.getParameters();
+          this.message = 'Parameter removed!';
           this.showMessage = true;
         })
         .catch((error) => {
           console.error(error);
-          this.getBooks();
+          this.getParameters();
         });
     },
   },
   created() {
-    this.getBooks();
-
+    this.getParameters();
   },
 };
 </script>

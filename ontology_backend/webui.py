@@ -1,69 +1,60 @@
-# TODO: call causal_lib from here and add to ontology
+# TODO: uses ontology as a data structure or database
+# furthermore, use causal_lib as a computation/algorithm lib on ontology
 #
 
 from flask import Blueprint
 from flask import Flask, jsonify, request
+from ontology import selected_parameters
 
 import uuid
 
 webui_blueprint = Blueprint("webui_blueprint", __name__)
 
 
-BOOKS = [
-    {"title": "On the Road", "author": "Jack Kerouac", "read": True, "id": "446"},
-    {
-        "title": "Harry Potter and the Philosopher's Stone",
-        "author": "J. K. Rowling",
-        "read": False,
-        "id": "444",
-    },
-    {"title": "Green Eggs and Ham", "author": "Dr. Seuss", "read": True, "id": "4474"},
-]
-
-
-def remove_book(book_id):
-    for book in BOOKS:
-        if book["id"] == book_id:
-            BOOKS.remove(book)
+def remove_parameter(name):
+    for param in selected_parameters:
+        if param["name"] == name:
+            selected_parameters.remove(param)
             return True
     return False
 
 
 @webui_blueprint.route("/ontology", methods=["GET", "POST"])
-def all_books():
+def all_parameters():
     response_object = {"status": "success"}
     if request.method == "POST":
         post_data = request.get_json()
-        BOOKS.append(
+        selected_parameters.append(
             {
-                "id": uuid.uuid4().hex,
-                "title": post_data.get("title"),
-                "author": post_data.get("author"),
-                "read": post_data.get("read"),
+                "name": post_data.get("name"),
+                "active": post_data.get("active"),
             }
         )
-        response_object["message"] = "Book added!"
+
+        response_object["message"] = "Parameter added!"
     else:
-        response_object["books"] = BOOKS
+        # get all
+        response_object["parameters"] = selected_parameters
     return jsonify(response_object)
 
 
-@webui_blueprint.route("/ontology/<book_id>", methods=["PUT", "DELETE"])
-def single_book(book_id):
+@webui_blueprint.route("/ontology/<name>", methods=["PUT", "DELETE"])
+def single_parameter(name):
     response_object = {"status": "success"}
     if request.method == "PUT":
         post_data = request.get_json()
-        remove_book(book_id)
-        BOOKS.append(
+        remove_parameter(name)
+        selected_parameters.append(
             {
-                "id": uuid.uuid4().hex,
-                "title": post_data.get("title"),
-                "author": post_data.get("author"),
-                "read": post_data.get("read"),
+                "name": post_data.get("name"),
+                "active": post_data.get("active"),
             }
         )
-        response_object["message"] = "Book updated!"
+
+        response_object["message"] = "Parameter updated!"
+
     if request.method == "DELETE":
-        remove_book(book_id)
-        response_object["message"] = "Book removed!"
+        remove_parameter(name)
+        response_object["message"] = "Parameter removed!"
+
     return jsonify(response_object)
