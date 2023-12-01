@@ -38,6 +38,11 @@
           </tbody>
         </table>
       </div>
+
+      <div>
+        <v-network-graph class="graph" :nodes="nodes" :edges="edges" />
+      </div>
+
     </div>
 
     <!-- add new parameter modal -->
@@ -120,6 +125,7 @@
 <script>
 import axios from 'axios';
 import Alert from './Alert.vue';
+import { nodes, edges, size, hues } from "./data";
 
 export default {
   data() {
@@ -129,6 +135,9 @@ export default {
         name: '',
         active: '',
       },
+      // it has 
+      //name: '',
+      //active: ''
       selected_parameters: [],
       message: '',
       showMessage: false,
@@ -137,6 +146,10 @@ export default {
         name: '',
         active: ''
       },
+      nodes,
+      edges,
+      size,
+      hues,
     };
   },
   components: {
@@ -161,6 +174,15 @@ export default {
       axios.get(path)
         .then((res) => {
           this.selected_parameters = res.data.parameters;
+
+          // update the graph too
+          for (const property in this.selected_parameters) {
+            const node = {
+              name: this.selected_parameters[property].name
+            };
+
+            nodes[this.selected_parameters[property].name] = node
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -211,7 +233,7 @@ export default {
     },
     handleEditSubmit() {
       this.toggleEditParameterModal(null);
-      let read = false;
+      let active = false;
       if (this.editParameterForm.active) active = true;
       const payload = {
         name: this.editParameterForm.name,
@@ -219,7 +241,7 @@ export default {
       };
       this.updateParameter(payload, this.editParameterForm.name);
     },
-    updateParameter(payload, ParameterID) {
+    updateParameter(payload, par_name) {
       const path = `http://127.0.0.1:5000/ontology/${par_name}`;
       axios.put(path, payload)
         .then(() => {
@@ -259,3 +281,11 @@ export default {
   },
 };
 </script>
+
+<style>
+.graph {
+  width: 800px;
+  height: 600px;
+  border: 1px solid #000;
+}
+</style>
