@@ -164,3 +164,6 @@ co2mpas/cache_plot
 tigramite
 tigramite
 /.vs/Causality
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/ProjectSettings.json

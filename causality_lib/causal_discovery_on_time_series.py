@@ -34,6 +34,9 @@ selected_parameters = [
 # Good starting point to read more about this topic:
 # https://medium.com/causality-in-data-science/introducing-conditional-independence-and-causal-discovery-77919db6159c
 #
+# More about PCMCI:
+# https://www.iup.uni-bremen.de/PEP_master_thesis/thesis_2020/Karmouche_MScThesis_2020.pdf
+#
 
 
 class Causal_discovery_on_time_series:
@@ -206,6 +209,8 @@ class Causal_discovery_on_time_series:
 
 
 # TODO: Integrating expert assumptions about links
+# "Often one may have prior knowledge about the existence or absence of links and their orientations.
+# Such expert knowledge can be intergrated via the link_assumptions argument.""
 
 alg = Causal_discovery_on_time_series(selected_parameters)
 alg.prepare_input_dataset()
