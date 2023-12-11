@@ -20,13 +20,5 @@ double tanh_impl(double x) {
 namespace py = pybind11;
 
 PYBIND11_MODULE(engine, m) {
-    m.def("fast_tanh2", &tanh_impl, R"pbdoc(
-        Compute a hyperbolic tangent of a single argument expressed in radians.
-    )pbdoc");
-
-#ifdef VERSION_INFO
-    m.attr("__version__") = VERSION_INFO;
-#else
-    m.attr("__version__") = "dev";
-#endif
+    m.def("fast_tanh2", &tanh_impl);
 }
