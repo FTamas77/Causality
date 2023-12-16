@@ -1,3 +1,13 @@
+#
+# Based on: https://github.com/jakobrunge/tigramite/blob/master/tutorials/causal_discovery/tigramite_tutorial_causal_discovery_overview.ipynb
+#
+# Good starting point to read more about this topic:
+# https://medium.com/causality-in-data-science/introducing-conditional-independence-and-causal-discovery-77919db6159c
+#
+# More about PCMCI:
+# https://www.iup.uni-bremen.de/PEP_master_thesis/thesis_2020/Karmouche_MScThesis_2020.pdf
+#
+
 import os
 from pathlib import Path
 import pandas as pd
@@ -8,99 +18,99 @@ from tigramite import plotting as tp
 from tigramite.pcmci import PCMCI
 from tigramite.independence_tests.parcorr import ParCorr
 
-#
-# Based on: https://github.com/jakobrunge/tigramite/blob/master/tutorials/causal_discovery/tigramite_tutorial_causal_discovery_overview.ipynb
-#
 
-# outcome: co2_emissions
-
-# temporally removed:
-# "engine_temperature_derivatives",
-# "wheel_speeds",
-#  "motor_p1_maximum_powers",
-# "active_cylinders",
-
-#  it is in different file: "velocities",
-
-# TODO: temporally copied here from ontology.py
-selected_parameters = [
-    "engine_temperatures",
-    "motor_p0_speeds",
-    "engine_powers_out",
-    "co2_emissions",
-    "fuel_consumptions_liters_value",
-]
-
-# Good starting point to read more about this topic:
-# https://medium.com/causality-in-data-science/introducing-conditional-independence-and-causal-discovery-77919db6159c
-#
-# More about PCMCI:
-# https://www.iup.uni-bremen.de/PEP_master_thesis/thesis_2020/Karmouche_MScThesis_2020.pdf
-#
+class config:
+    pass
 
 
-class Causal_discovery_on_time_series:
+class config_bubi(config):
+    __ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
+    __INPUT_DATA_FILE = os.path.join(
+        __ROOT_DIR, "dataset", "bubi-weather_export_2212-2312.csv"
+    )
+
+    selected_parameters = [
+        "start_trip_no",
+        "temperature",
+        "max_wind_speed",
+    ]
+
+    def prepare_dataset(self):
+        bubi = pd.read_csv(self.__INPUT_DATA_FILE, nrows=3000, index_col="ts_0")
+        bubi = bubi[self.selected_parameters + ["station_name"]]
+
+        # Change to datetime format -> we use ts_0 as index col
+        # bubi["ts_0"] = pd.to_datetime(bubi["ts_0"])
+
+        # Filter on stations
+        bubi = bubi.loc[bubi["station_name"] == "0101-Batthyány tér"]
+
+        # After filtering, remove the station name
+        bubi = bubi[self.selected_parameters]
+
+        return bubi
+
+
+class config_co2mpas(config):
     __ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
     __INPUT_DATA_FILE = os.path.join(
         __ROOT_DIR, "co2mpas", "output", "20231118_142209-co2mpas_conventional.xlsx"
     )
 
-    def __str__(self):
-        return "Causal_discovery_on_time_series"
+    # TODO: outcome: co2_emissions
+    # temporally removed:
+    # "engine_temperature_derivatives",
+    # "wheel_speeds",
+    #  "motor_p1_maximum_powers",
+    # "active_cylinders",
+    #  it is in different file: "velocities",
 
-    def __init__(self, selected_parameters):
-        self.selected_parameters = selected_parameters
-        return
+    # TODO: temporally copied here from ontology.py
+    selected_parameters = [
+        "engine_temperatures",
+        "motor_p0_speeds",
+        "engine_powers_out",
+        "co2_emissions",
+        "fuel_consumptions_liters_value",
+    ]
 
-    def prepare_input_dataset(self):
-        """
-        Input: requested parameters and the files
-        Output: dataframe object has been created.
-
-        self.nedc_h
-        self.dataframe
-        """
-
-        # output.prediction.nedc_h.ts
-        self.nedc_h = pd.read_excel(
+    def prepare_dataset(self):
+        nedc_h = pd.read_excel(
             self.__INPUT_DATA_FILE,
             sheet_name="output.prediction.nedc_h.ts",
             skiprows=1,
-            index_col="times",
+            index_col="times",  # TODO: ?
             nrows=1500,
         )
 
-        self.nedc_h = self.nedc_h[selected_parameters]
-        print(self.nedc_h.to_string(index=True, max_rows=10))
+        return nedc_h[self.selected_parameters]
 
-        self.dataframe = pp.DataFrame(
-            self.nedc_h.to_numpy(), var_names=self.selected_parameters
-        )
+
+class Causal_discovery_on_time_series:
+    def __str__(self):
+        return "Causal_discovery_on_time_series"
+
+    def __init__(self):
+        self.config = config_bubi()
+        # self.config = config_co2mpas()
+
+    def prepare_input_dataset(self):
+        self.dataframe = self.config.prepare_dataset()
 
     def plot_prepared_data(self):
-        """
-        Check things like:
-            Stationary and
-            Doesn't contain missing values
-            Lagged dependencies
-        """
-
-        plt.figure("Prepared input data")
         fig, axs = plt.subplots(
-            nrows=len(self.selected_parameters), ncols=1, sharex=True
+            nrows=len(self.config.selected_parameters), ncols=1, sharex=True
         )
-        fig.suptitle("Selected parameters")
 
-        for index, param in enumerate(self.selected_parameters):
+        fig.suptitle("Selected parameters")
+        for index, param in enumerate(self.config.selected_parameters):
             axs[index].set_title(param)
-            axs[index].plot(self.nedc_h[param], color="tab:green")
+            axs[index].plot(self.dataframe[param], color="tab:green")
+        plt.show()
 
     def data_depedencies_and_lag_fn(self):
-        """
-        Investigating data dependencies and lag functions
-
-        tau_max: maximum time lag
-        """
+        # TODO: https://stackoverflow.com/questions/77670433/dataframe-object-has-no-attribute-n-when-i-want-to-plot-my-data
+        self.dataframe = pp.DataFrame(self.dataframe.to_numpy())
 
         # First investigation:
         matrix_lags = None
@@ -125,6 +135,8 @@ class Causal_discovery_on_time_series:
         # Lagged unconditional dependencies -> helps to find the tau
         pcmci = PCMCI(dataframe=self.dataframe, cond_ind_test=parcorr, verbosity=1)
 
+        return
+
         correlations = pcmci.get_lagged_dependencies(tau_max=20, val_only=True)[
             "val_matrix"
         ]
@@ -133,7 +145,7 @@ class Causal_discovery_on_time_series:
             name="plot_lagfuncs",
             val_matrix=correlations,
             setup_args={
-                "var_names": self.selected_parameters,
+                "var_names": self.config.selected_parameters,
                 "x_base": 5,
                 "y_base": 0.5,
             },
@@ -141,10 +153,6 @@ class Causal_discovery_on_time_series:
         plt.show()
 
     def PCMCI_causal_discovery(self):
-        """
-        _summary_
-        """
-
         # TODO: we have already created this in the prev function
         parcorr = ParCorr(significance="analytic")
         pcmci = PCMCI(dataframe=self.dataframe, cond_ind_test=parcorr, verbosity=1)
@@ -182,12 +190,10 @@ class Causal_discovery_on_time_series:
         self.results["graph"] = graph
 
     def plotting(self):
-        """ """
-
         tp.plot_graph(
             val_matrix=self.results["val_matrix"],
             graph=self.results["graph"],
-            var_names=self.selected_parameters,
+            var_names=self.config.selected_parameters,
             link_colorbar_label="cross-MCI",
             node_colorbar_label="auto-MCI",
             show_autodependency_lags=False,
@@ -198,7 +204,7 @@ class Causal_discovery_on_time_series:
             figsize=(6, 4),
             val_matrix=self.results["val_matrix"],
             graph=self.results["graph"],
-            var_names=self.selected_parameters,
+            var_names=self.config.selected_parameters,
             link_colorbar_label="MCI",
         )
         plt.show()
@@ -212,12 +218,12 @@ class Causal_discovery_on_time_series:
 # "Often one may have prior knowledge about the existence or absence of links and their orientations.
 # Such expert knowledge can be intergrated via the link_assumptions argument.""
 
-alg = Causal_discovery_on_time_series(selected_parameters)
-alg.prepare_input_dataset()
-# Optional:
-# alg.plot_prepared_data()
-# alg.data_depedencies_and_lag_fn()
-alg.PCMCI_causal_discovery()
-alg.plotting()
+if __name__ == "__main__":
+    alg = Causal_discovery_on_time_series()
+    alg.prepare_input_dataset()
+    alg.plot_prepared_data()
+    alg.data_depedencies_and_lag_fn()
+    alg.PCMCI_causal_discovery()
+    alg.plotting()
 
-print("Exiting..")
+    print("Exiting..")
