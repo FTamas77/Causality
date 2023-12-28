@@ -5,3 +5,7 @@
 [submodule "tigramite"]
 	path = tigramite
 	url = https://github.com/jakobrunge/tigramite
+
+[submodule "cppcausality"]
+	path = dataset
+	url = https://github.com/FTamas77/cppcausality.git
