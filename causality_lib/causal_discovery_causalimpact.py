@@ -9,7 +9,8 @@ from pathlib import Path
 import matplotlib
 import matplotlib.pyplot as plt
 
-from causal_discovery_tigramite import config_bubi
+from causal_discovery_configurator import config_bubi
+from causal_discovery_configurator import config_co2mpas
 
 
 class Causal_discovery_on_time_series_with_intervention:

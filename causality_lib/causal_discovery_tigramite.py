@@ -10,6 +10,7 @@
 
 import os
 from pathlib import Path
+
 import pandas as pd
 from matplotlib import pyplot as plt
 
@@ -19,71 +20,8 @@ from tigramite.pcmci import PCMCI
 from tigramite.independence_tests.parcorr import ParCorr
 
 
-class config:
-    pass
-
-
-class config_bubi(config):
-    __ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
-    __INPUT_DATA_FILE = os.path.join(
-        __ROOT_DIR, "dataset", "bubi-weather_export_2212-2312.csv"
-    )
-
-    selected_parameters = [
-        "start_trip_no",
-        "temperature",
-        "max_wind_speed",
-    ]
-
-    def prepare_dataset(self):
-        bubi = pd.read_csv(self.__INPUT_DATA_FILE, nrows=3000, index_col="ts_0")
-        bubi = bubi[self.selected_parameters + ["station_name"]]
-
-        # Change to datetime format -> we use ts_0 as index col
-        # bubi["ts_0"] = pd.to_datetime(bubi["ts_0"])
-
-        # Filter on stations
-        bubi = bubi.loc[bubi["station_name"] == "0101-Batthyány tér"]
-
-        # After filtering, remove the station name
-        bubi = bubi[self.selected_parameters]
-
-        return bubi
-
-
-class config_co2mpas(config):
-    __ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
-    __INPUT_DATA_FILE = os.path.join(
-        __ROOT_DIR, "co2mpas", "output", "20231118_142209-co2mpas_conventional.xlsx"
-    )
-
-    # TODO: outcome: co2_emissions
-    # temporally removed:
-    # "engine_temperature_derivatives",
-    # "wheel_speeds",
-    #  "motor_p1_maximum_powers",
-    # "active_cylinders",
-    #  it is in different file: "velocities",
-
-    # TODO: temporally copied here from ontology.py
-    selected_parameters = [
-        "engine_temperatures",
-        "motor_p0_speeds",
-        "engine_powers_out",
-        "co2_emissions",
-        "fuel_consumptions_liters_value",
-    ]
-
-    def prepare_dataset(self):
-        nedc_h = pd.read_excel(
-            self.__INPUT_DATA_FILE,
-            sheet_name="output.prediction.nedc_h.ts",
-            skiprows=1,
-            index_col="times",  # TODO: ?
-            nrows=1500,
-        )
-
-        return nedc_h[self.selected_parameters]
+from causal_discovery_configurator import config_bubi
+from causal_discovery_configurator import config_co2mpas
 
 
 class Causal_discovery_on_time_series:
