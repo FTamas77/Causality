@@ -4,6 +4,11 @@ from pathlib import Path
 import pandas as pd
 from matplotlib import pyplot as plt
 
+import numpy as np
+from sklearn.linear_model import LinearRegression
+
+import datetime as dt
+
 
 class config:
     pass
@@ -74,9 +79,46 @@ class config_bubi(config):
         plt.legend(
             ["intervented", "control"], loc="upper right", edgecolor="red", shadow=True
         )
+
         plt.show()
 
-        return bubi_control
+        return bubi_intervention, bubi_control
+
+    def regression(self, bubi_intervention, bubi_control):
+        bubi_control.reset_index()  # Is it needed?
+
+        bubi_control["ts_0"] = bubi_control.index
+        bubi_control.index = range(len(bubi_control))
+
+        plt.scatter(
+            bubi_control[["ts_0"]], bubi_control[["end_trip_no"]], color="black"
+        )
+        plt.show()
+
+        x = pd.to_numeric(bubi_control.ts_0, downcast="float").to_numpy().reshape(-1, 1)
+        y = pd.to_numeric(bubi_control.end_trip_no, downcast="float")
+
+        print(x)
+        print(y)
+
+        model = LinearRegression()
+        model.fit(x, y)
+        r_sq = model.score(x, y)
+
+        print(f"coefficient of determination: {r_sq}")
+        print(f"intercept: {model.intercept_}")
+        print(f"slope: {model.coef_}")
+
+        dt_obj = dt.datetime.strptime("2023-08-01", "%Y-%m-%d")
+        numpy_array = np.array([dt_obj.timestamp()]).reshape(-1, 1)
+        print(numpy_array)
+        y_pred = model.predict(numpy_array)
+        print(f"predicted response:\n{y_pred}")
+
+        # https://realpython.com/linear-regression-in-python/
+        y_pred = model.intercept_ + model.coef_ * numpy_array
+        print(y_pred)
+        return
 
 
 class config_co2mpas(config):
@@ -116,5 +158,6 @@ class config_co2mpas(config):
 
 if __name__ == "__main__":
     my_run = config_bubi()
-    my_run.prepare_dataset()
+    bubi_intervention, bubi_control = my_run.prepare_dataset()
+    my_run.regression(bubi_intervention, bubi_control)
     print("end")
