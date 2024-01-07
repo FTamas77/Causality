@@ -9,6 +9,8 @@ from sklearn.linear_model import LinearRegression
 
 import datetime as dt
 
+from statsmodels.tsa.seasonal import seasonal_decompose
+
 
 class config:
     pass
@@ -120,6 +122,37 @@ class config_bubi(config):
         print(y_pred)
         return
 
+    def decomposition(self, bubi_intervention, bubi_control):
+        """
+        trend, seasonality, and residual
+        https://medium.com/@vaibhav1403/decomposition-in-time-series-analysis-c7b03c5a1ea2
+        """
+        bubi_intervention.plot()
+
+        bubi_intervention_before = bubi_control.query(
+            "ts_0 >= '2023-05-01' and ts_0 < '2023-06-15'"
+        )
+        bubi_intervention_before.plot()
+
+        bubi_intervention_after = bubi_control.query(
+            "ts_0 > '2023-06-15' and ts_0 <= '2023-08-01'"
+        )
+        bubi_intervention_after.plot()
+
+        result_mul = seasonal_decompose(
+            bubi_intervention["end_trip_no"],
+            model="multiplicative",
+            extrapolate_trend="freq",
+        )
+        result_add = seasonal_decompose(
+            bubi_intervention["end_trip_no"], model="additive", extrapolate_trend="freq"
+        )
+
+        plt.rcParams.update({"figure.figsize": (20, 10)})
+        result_mul.plot().suptitle("Multiplicative Decompose", fontsize=30)
+        result_add.plot().suptitle("Additive Decompose", fontsize=30)
+        plt.show()
+
 
 class config_co2mpas(config):
     __ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
@@ -159,5 +192,6 @@ class config_co2mpas(config):
 if __name__ == "__main__":
     my_run = config_bubi()
     bubi_intervention, bubi_control = my_run.prepare_dataset()
-    my_run.regression(bubi_intervention, bubi_control)
+    # my_run.regression(bubi_intervention, bubi_control)
+    my_run.decomposition(bubi_intervention, bubi_control)
     print("end")
