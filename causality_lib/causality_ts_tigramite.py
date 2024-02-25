@@ -20,8 +20,8 @@ from tigramite.pcmci import PCMCI
 from tigramite.independence_tests.parcorr import ParCorr
 
 
-from causal_discovery_configurator import config_bubi
-from causal_discovery_configurator import config_co2mpas
+from causality_ts_configurator import config_bubi
+from causality_ts_configurator import config_co2mpas
 
 
 class Causal_discovery_on_time_series:
@@ -33,7 +33,9 @@ class Causal_discovery_on_time_series:
         # self.config = config_co2mpas()
 
     def prepare_input_dataset(self):
-        self.dataframe = self.config.prepare_dataset()
+        # TODO: only read the data
+        self.dataframe = self.config.only_read_dataset()
+        print(type(self.dataframe))
 
     def plot_prepared_data(self):
         fig, axs = plt.subplots(
@@ -46,52 +48,14 @@ class Causal_discovery_on_time_series:
             axs[index].plot(self.dataframe[param], color="tab:green")
         plt.show()
 
-    def data_depedencies_and_lag_fn(self):
-        # TODO: https://stackoverflow.com/questions/77670433/dataframe-object-has-no-attribute-n-when-i-want-to-plot-my-data
-        self.dataframe = pp.DataFrame(self.dataframe.to_numpy())
-
-        # First investigation:
-        matrix_lags = None
-        tp.plot_scatterplots(
-            name="plot_scatterplots",
-            dataframe=self.dataframe,
-            add_scatterplot_args={"matrix_lags": matrix_lags},
-        )
-        plt.show()
-
-        # Second investigation:
-        tp.plot_densityplots(
-            name="plot_densityplots",
-            dataframe=self.dataframe,
-            add_densityplot_args={"matrix_lags": matrix_lags},
-        )
-        plt.show()
-
-        # Next: plot the lagged unconditional dependencies
-        parcorr = ParCorr(significance="analytic")
-
-        # Lagged unconditional dependencies -> helps to find the tau
-        pcmci = PCMCI(dataframe=self.dataframe, cond_ind_test=parcorr, verbosity=1)
-
-        return
-
-        correlations = pcmci.get_lagged_dependencies(tau_max=20, val_only=True)[
-            "val_matrix"
-        ]
-
-        lag_func_matrix = tp.plot_lagfuncs(
-            name="plot_lagfuncs",
-            val_matrix=correlations,
-            setup_args={
-                "var_names": self.config.selected_parameters,
-                "x_base": 5,
-                "y_base": 0.5,
-            },
-        )
-        plt.show()
-
     def PCMCI_causal_discovery(self):
-        # TODO: we have already created this in the prev function
+
+        self.dataframe = pp.DataFrame(
+            self.dataframe.to_numpy(),
+            mask=None,
+            var_names=self.config.selected_parameters,
+        )
+
         parcorr = ParCorr(significance="analytic")
         pcmci = PCMCI(dataframe=self.dataframe, cond_ind_test=parcorr, verbosity=1)
 
@@ -160,7 +124,7 @@ if __name__ == "__main__":
     alg = Causal_discovery_on_time_series()
     alg.prepare_input_dataset()
     alg.plot_prepared_data()
-    alg.data_depedencies_and_lag_fn()
+    # alg.data_depedencies_and_lag_fn()
     alg.PCMCI_causal_discovery()
     alg.plotting()
 

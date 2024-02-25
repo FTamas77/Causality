@@ -1,5 +1,5 @@
-from causal_discovery_configurator import config_bubi
-from causal_discovery_configurator import config_co2mpas
+from causality_lib.causality_ts_configurator import config_bubi
+from causality_lib.causality_ts_configurator import config_co2mpas
 
 
 class Causal_discovery_tfp_causalimpact:

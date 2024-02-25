@@ -7,6 +7,8 @@ import os
 
 from configurator import configurator
 
+# https://causal-learn.readthedocs.io/en/latest/search_methods_index/Constraint-based%20causal%20discovery%20methods/PC.html
+
 
 class Causal_discovery:
 
@@ -15,19 +17,19 @@ class Causal_discovery:
 
         c = configurator()
         pyd = GraphUtils.to_pydot(
-            cg.G, labels=c.get_causal_discovery_keep_cols_labels())
+            cg.G, labels=c.get_causal_discovery_keep_cols_labels()
+        )
 
-        PC_FILE = os.path.join(c.get_ROOT_DIR(), 'doc', 'pc.png')
+        PC_FILE = os.path.join(c.get_ROOT_DIR(), "doc", "pc.png")
         pyd.write_png(PC_FILE)
 
     def calculate_fci(self, df):
         g, edges = fci(df.to_numpy())
 
         c = configurator()
-        pdy = GraphUtils.to_pydot(
-            g, labels=c.get_causal_discovery_keep_cols_labels())
+        pdy = GraphUtils.to_pydot(g, labels=c.get_causal_discovery_keep_cols_labels())
 
-        FCI_FILE = os.path.join(c.get_ROOT_DIR(), 'doc', 'fci.png')
+        FCI_FILE = os.path.join(c.get_ROOT_DIR(), "doc", "fci.png")
         pdy.write_png(FCI_FILE)
 
     def calculate_ges(self, df):
@@ -35,10 +37,11 @@ class Causal_discovery:
 
         c = configurator()
         pyd = GraphUtils.to_pydot(
-            Record['G'], labels=c.get_causal_discovery_keep_cols_labels())
+            Record["G"], labels=c.get_causal_discovery_keep_cols_labels()
+        )
 
         # TODO: we need text to pass to the ontology
-        #print(pyd)
+        # print(pyd)
 
-        GES_FILE = os.path.join(c.get_ROOT_DIR(), 'doc', 'ges.png')
+        GES_FILE = os.path.join(c.get_ROOT_DIR(), "doc", "ges.png")
         pyd.write_png(GES_FILE)

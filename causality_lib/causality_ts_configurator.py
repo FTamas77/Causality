@@ -22,15 +22,48 @@ class config_bubi(config):
         __ROOT_DIR, "dataset", "bubi-weather_export_2212-2312.csv"
     )
 
+    # TODO: it is for impact
     #        "temperature",
     #       "max_wind_speed",
 
     # start_trip_no
-    selected_parameters = ["end_trip_no"]
+    # selected_parameters = ["end_trip_no"]
 
-    def prepare_dataset(self):
+    # Note: just added: precipitation
+    selected_parameters = [
+        "end_trip_no",
+        "temperature",
+        "max_wind_speed",
+        "start_trip_no",
+        "precipitation",
+    ]
+
+    # instead of prepare_dataset: I need dataset for Tigramite
+    def only_read_dataset(self):
         # , nrows=3000
         bubi = pd.read_csv(self.__INPUT_DATA_FILE)
+
+        # Filter on stations
+        bubi = bubi[self.selected_parameters + ["station_name", "ts_0"]]
+
+        bubi = bubi[bubi.station_name.str.startswith("0507")]
+        print(bubi)
+
+        # Resample on days
+        bubi["ts_0"] = pd.to_datetime(bubi["ts_0"])
+        bubi = bubi.resample("D", on="ts_0").sum()
+        print(bubi)
+
+        # remove helper data (station and time)
+        bubi = bubi[self.selected_parameters]
+        print(bubi)
+
+        return bubi
+
+    # prepare for intervention, causal impact
+    def prepare_dataset(self):
+        # , nrows=3000
+        bubi = pd.read_csv(self.__INPUT_DATA_FILE, nrows=3000)
         print(bubi)
 
         # Filter on stations

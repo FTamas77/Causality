@@ -20,10 +20,10 @@ class configurator:
     __INPUT_DATA_DIR = os.path.join(__ROOT_DIR, "dataset")
 
     __CAUSAL_GRAPH_CONFIG_FILE = os.path.join(
-        __ROOT_DIR, "causality_lib", "causal_graph_config"
+        __ROOT_DIR, "causality_lib", "measurement_causal_graph"
     )
     __DEFAULT_CAUSAL_GRAPH_CONFIG_FILE = os.path.join(
-        __ROOT_DIR, "causality_lib", "causal_graph_config_default"
+        __ROOT_DIR, "causality_lib", "measurement_causal_graph_default"
     )
 
     def __new__(cls):

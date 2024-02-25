@@ -1,0 +1,13 @@
+graph    [
+                                            directed 1    
+                                            node [id "hengerűrtartalom" label "hengerűrtartalom"]
+                                            node [id "teljesítmény" label "teljesítmény"]
+                                            node [id "Elhaladási zaj dBA" label "Elhaladási zaj dBA"]
+                                            node [id "CO2 kibocsátás gkm V7" label "CO2 kibocsátás gkm V7"]
+                                            edge [source "hengerűrtartalom" target "teljesítmény"]
+                                            edge [source "hengerűrtartalom" target "CO2 kibocsátás gkm V7"]
+                                            edge [source "teljesítmény" target "Elhaladási zaj dBA"]
+                                            edge [source "teljesítmény" target "CO2 kibocsátás gkm V7"]
+                                            edge [source "Elhaladási zaj dBA" target "CO2 kibocsátás gkm V7"]
+                            ]
+                            

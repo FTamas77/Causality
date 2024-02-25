@@ -14,6 +14,10 @@ from configurator import configurator
 matplotlib.use("TKAgg")
 
 
+# API: https://www.pywhy.org/dowhy/v0.11.1/dowhy.html
+# Examples: https://www.pywhy.org/dowhy/v0.11.1/example_notebooks/load_graph_example.html
+
+
 class Causal_inference:
 
     def create_model(self, df):
@@ -34,14 +38,12 @@ class Causal_inference:
 
         # Figure 1.
         # use checkbox to enable or disable it, or config file
-        scatter_plot_with_correlation_line(df[c.get_treatment()],
-                                           df[c.get_outcome()])
+        scatter_plot_with_correlation_line(df[c.get_treatment()], df[c.get_outcome()])
 
         # Figure 2.
         plt.figure("Fig. 2. Manually created input causal graph")
         c = configurator()
-        CAUSAL_MODEL_FILE = os.path.join(c.get_ROOT_DIR(), 'doc',
-                                         'causal_input_graph')
+        CAUSAL_MODEL_FILE = os.path.join(c.get_ROOT_DIR(), "doc", "causal_input_graph")
         model.view_model(layout="dot", file_name=CAUSAL_MODEL_FILE)
         plt.close()
 
@@ -68,8 +70,8 @@ class Causal_inference:
         )
 
         # Figure 3.
-        #dowhy.plotter.plot_causal_effect(estimate, df["teljesítmény"],
-        #df["CO2 kibocsátás gkm V7"])
+        # dowhy.plotter.plot_causal_effect(estimate, df["teljesítmény"],
+        # df["CO2 kibocsátás gkm V7"])
 
         print("*** estimate begin ***\n")
         print(estimate)
@@ -78,9 +80,9 @@ class Causal_inference:
         return estimate
 
     def refute(self, model, estimand, estimate):
-        res_random = model.refute_estimate(estimand,
-                                           estimate,
-                                           method_name="random_common_cause")
+        res_random = model.refute_estimate(
+            estimand, estimate, method_name="random_common_cause"
+        )
 
         print("*** random_common_cause begin ***\n")
         print(res_random)
