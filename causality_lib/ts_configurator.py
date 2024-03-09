@@ -24,7 +24,7 @@ class config_bubi(config):
         "precipitation",
     ]
 
-    def read_causal_discovery_dataset(self, selected_parameters=None):
+    def read_causal_discovery_dataset(self, selected_parameters=None, resample=True):
         """
         Returns multiple feautures, according to the selected parameters
         """
@@ -41,9 +41,12 @@ class config_bubi(config):
         print(bubi)
 
         # Resample on days
-        bubi["ts_0"] = pd.to_datetime(bubi["ts_0"])
-        bubi = bubi.resample("D", on="ts_0").sum()
-        print(bubi)
+        if resample is True:
+            bubi["ts_0"] = pd.to_datetime(bubi["ts_0"])
+            bubi = bubi.resample("D", on="ts_0").sum()
+            print(bubi)
+        else:
+            print("There is no resample.")
 
         # remove helper data (station and time)
         bubi = bubi[self.selected_parameters]

@@ -32,7 +32,7 @@ class ts_causalimpact:
         )
 
     def apply_granger_causality(self):
-
+        pass
 
 
 if __name__ == "__main__":
