@@ -1,5 +1,6 @@
 #
-# Based on: https://github.com/jakobrunge/tigramite/blob/master/tutorials/causal_discovery/tigramite_tutorial_causal_discovery_overview.ipynb
+# Based on:
+# https://github.com/jakobrunge/tigramite/blob/master/tutorials/causal_discovery/tigramite_tutorial_causal_discovery_overview.ipynb
 #
 # Good starting point to read more about this topic:
 # https://medium.com/causality-in-data-science/introducing-conditional-independence-and-causal-discovery-77919db6159c
@@ -20,21 +21,20 @@ from tigramite.pcmci import PCMCI
 from tigramite.independence_tests.parcorr import ParCorr
 
 
-from causality_ts_configurator import config_bubi
-from causality_ts_configurator import config_co2mpas
+from ts_configurator import config_bubi
+from ts_configurator import config_co2mpas
 
 
-class Causal_discovery_on_time_series:
+class ts_tigramite:
     def __str__(self):
         return "Causal_discovery_on_time_series"
 
-    def __init__(self):
-        self.config = config_bubi()
-        # self.config = config_co2mpas()
+    def __init__(self, config):
+        self.config = config
 
     def prepare_input_dataset(self):
-        # TODO: only read the data
-        self.dataframe = self.config.only_read_dataset()
+        self.dataframe = self.config.read_causal_discovery_dataset()
+        print(self.dataframe)
         print(type(self.dataframe))
 
     def plot_prepared_data(self):
@@ -50,6 +50,7 @@ class Causal_discovery_on_time_series:
 
     def PCMCI_causal_discovery(self):
 
+        # TODO: why is it needed? -> var_names
         self.dataframe = pp.DataFrame(
             self.dataframe.to_numpy(),
             mask=None,
@@ -60,38 +61,10 @@ class Causal_discovery_on_time_series:
         pcmci = PCMCI(dataframe=self.dataframe, cond_ind_test=parcorr, verbosity=1)
 
         pcmci.verbosity = 1
-        # TODO: we use it in the next function
+
         self.results = pcmci.run_pcmci(tau_max=8, pc_alpha=None, alpha_level=0.01)
 
-        print("p-values")
-        print(self.results["p_matrix"].round(3))
-
-        print("MCI partial correlations")
-        print(self.results["val_matrix"].round(2))
-
-        #
-        # False-discovery rate control
-        #
-
-        q_matrix = pcmci.get_corrected_pvalues(
-            p_matrix=self.results["p_matrix"], tau_max=8, fdr_method="fdr_bh"
-        )
-
-        pcmci.print_significant_links(
-            p_matrix=q_matrix, val_matrix=self.results["val_matrix"], alpha_level=0.01
-        )
-
-        graph = pcmci.get_graph_from_pmatrix(
-            p_matrix=q_matrix,
-            alpha_level=0.01,
-            tau_min=0,
-            tau_max=8,
-            link_assumptions=None,
-        )
-
-        self.results["graph"] = graph
-
-    def plotting(self):
+    def show_results(self):
         tp.plot_graph(
             val_matrix=self.results["val_matrix"],
             graph=self.results["graph"],
@@ -111,21 +84,22 @@ class Causal_discovery_on_time_series:
         )
         plt.show()
 
-        # export results
-        # tp.write_csv(val_matrix=results["val_matrix"], graph=results["graph"],
-        #              var_names=var_names,save_name="test_graph.csv", digits=5)
-
 
 # TODO: Integrating expert assumptions about links
 # "Often one may have prior knowledge about the existence or absence of links and their orientations.
 # Such expert knowledge can be intergrated via the link_assumptions argument.""
 
 if __name__ == "__main__":
-    alg = Causal_discovery_on_time_series()
+
+    bubi = config_bubi()
+    # co2mpas = config_co2mpas()
+
+    alg = ts_tigramite(bubi)
+
     alg.prepare_input_dataset()
     alg.plot_prepared_data()
-    # alg.data_depedencies_and_lag_fn()
+
     alg.PCMCI_causal_discovery()
-    alg.plotting()
+    alg.show_results()
 
     print("Exiting..")
