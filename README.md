@@ -24,18 +24,3 @@ Setting up:
   * Build: `py -m build`
 * Test to upload [test_pypi](https://test.pypi.org/account/register/https://test.pypi.org/account/register/)
   * Upload: `py -m twine upload --repository testpypi dist/*`
-
-## git related useful commands
-
-* Create tag: `git tag `<tagname>
-* Push tags: `git push origin --tags`
-* Move tags, steps:
-  * git tag -d <tagname>                  # delete the old tag locally
-  * git push origin :refs/tags/<tagname>  # delete the old tag remotely
-  * git tag <tagname> <commitId>          # make a new tag locally
-  * git push origin <tagname>             # push the new local tag to the remote
-
-# Applied dataset
-
-* Added as a submodule
-* [https://github.com/FTamas77/dataset](https://github.com/FTamas77/datasethttps:/)

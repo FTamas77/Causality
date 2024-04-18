@@ -5,24 +5,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "ontology_backend",
-      "type": "python",
-      "request": "launch",
-      "module": "ontology_backend",
-      "justMyCode": true,
-      "env": {
-        "PYTHONPATH": "d:/Projects/Causality/ontology_backend"
-      }
-    },
-    {
-      "name": "test_ontology",
-      "type": "python",
-      "request": "launch",
-      "module": "pytest",
-      "justMyCode": true,
-      "args": ["tests/test_ontology.py"]
-    },
-    {
       "name": "test_causality",
       "type": "python",
       "request": "launch",
