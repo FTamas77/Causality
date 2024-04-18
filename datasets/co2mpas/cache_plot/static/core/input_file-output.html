@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        svg.on {
+            border: 4px solid #008CFF;
+            animation: blink-animation 1s linear;
+            -webkit-animation: blink-animation 1s linear;
+        }
+
+        .node.on g:first-of-type a:first-child path:first-child {
+            stroke: #008CFF;
+            stroke-width: 4;
+            animation: blink-animation 1s linear;
+            -webkit-animation: blink-animation 1s linear;
+        }
+
+        .node.on g:first-of-type a:first-child polygon:first-child {
+            stroke: #008CFF;
+            stroke-width: 4;
+            animation: blink-animation 1s linear;
+            -webkit-animation: blink-animation 1s linear;
+        }
+
+        @keyframes blink-animation {
+            to {
+                stroke-width: 0;
+                border-width: 0;
+            }
+        }
+
+        @-webkit-keyframes blink-animation {
+            to {
+                stroke-width: 0;
+                border-width: 0;
+            }
+        }
+
+        .controls {
+            background: #343a40;
+            width: 100%;
+        }
+
+        .controls button {
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            color: #BBBBBB;
+            cursor: pointer;
+            border-radius: 0.25rem;
+        }
+
+        .controls button:hover {
+            background-color: #555;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+        }
+
+        #iframe {
+            flex-grow: 1;
+        }
+
+        #index {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sh-ico {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            margin-left: 8px;
+            padding-top: 3px;
+            vertical-align: middle;
+            content: "";
+            background: no-repeat center center;
+            background-size: 100% 100%;
+        }
+
+        .sh-ico-compress {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg fill='none' height='24' stroke='%23BBBBBB' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3'/%3E%3C/svg%3E");
+        }
+
+        .sh-ico-expand {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg fill='none' height='24' stroke='%23BBBBBB' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3'/%3E%3C/svg%3E");
+        }
+    </style>
+    <!-- Required Javascript -->
+    
+    
+</head>
+<body onload="_onload()">
+<div id="index" style="display: none; height: 100%">
+    <div class="controls">
+        <button id="btnFullScreen" class="sh-ico sh-ico-expand"
+                style="display: none"
+                onclick="FullScreen()"
+                title="Enter/Exit Full Screen">
+        </button>
+        <button id="btnBack" onclick="onBack(event)" title="Go back">
+            &lt;
+        </button>
+        <button id="btnForward" onclick="onForward(event)" title="Go forward">
+            &gt;
+        </button>
+    </div>
+    <iframe id="iframe" allowfullscreen frameborder="0"></iframe>
+</div>
+<div id="content" style="background: white; display: none"> <div class="highlight" style="background: transparent"><pre style="line-height: 125%;"><span></span><span style="color: #666666">&lt;</span>_io<span style="color: #666666">.</span>BytesIO <span style="color: #008000">object</span> at <span style="color: #666666">0x000002876B4EB9C0&gt;</span>
+</pre></div>
+</div>
+
+<script>
+    var id, hist = {i: -1, list: []}, isFull;
+
+    function FullScreen() {
+        var el = document.getElementById("btnFullScreen");
+        if (isFull) {
+            closeFullscreen();
+            isFull = false;
+            el.setAttribute('class', el.getAttribute('class').replace("sh-ico-compress", "sh-ico-expand"));
+        } else {
+            openFullscreen();
+            isFull = true;
+            el.setAttribute('class', el.getAttribute('class').replace("sh-ico-expand", "sh-ico-compress"));
+        }
+    }
+
+    function getURLParam(name) {
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results == null) {
+            return null;
+        } else {
+            return decodeURI(results[1]) || 0;
+        }
+    }
+
+    function setURLParam(key, value) {
+        let uri = window.location.href,
+            re = new RegExp("([?&])" + key + "=.*?(&|$)", "i"),
+            separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            return uri.replace(re, '$1' + key + "=" + encodeURI(value) + '$2');
+        } else {
+            return uri + separator + key + "=" + encodeURI(value);
+        }
+    }
+
+    function iframeLoad(e) {
+        e.preventDefault();
+        document.getElementById("iframe").contentWindow.postMessage({
+            id: id,
+            action: 'id'
+        }, '*');
+    }
+
+    function onBack(e) {
+        e.preventDefault();
+        if (hist.i > 0) {
+            hist.i--;
+            setIframe(hist.list[hist.i])
+        }
+    }
+
+    function onForward(e) {
+        e.preventDefault();
+        if (hist.i + 1 < hist.list.length) {
+            hist.i++;
+            setIframe(hist.list[hist.i])
+        }
+    }
+
+    function setIframe(src) {
+        document.getElementById("iframe").src = src
+    }
+
+    function closeFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { /* Firefox */
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE/Edge */
+            document.msExitFullscreen();
+        }
+    }
+
+    function isFullscreenSupported() {
+        let elem = document.body;
+        return elem.requestFullscreen || elem.mozRequestFullScreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen
+    }
+
+    function openFullscreen() {
+        let elem = document.body;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen()
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen()
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+            elem.webkitRequestFullscreen()
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen()
+        }
+    }
+
+    function _onload() {
+        if (getURLParam("controls") === "true") {
+            document.getElementById("iframe").onload = iframeLoad;
+            document.getElementById("index").style.display = "flex";
+            if (isFullscreenSupported())
+                document.getElementById("btnFullScreen").style.display = "inline-block";
+            id = Date.now();
+            setIframe(setURLParam("controls", "false"));
+            window.addEventListener('message', function (event) {
+                if (event.data.id === id) {
+                    if (event.data.action === 'url') {
+                        let href = event.data.url;
+                        if (hist.list[hist.i] !== href) {
+                            hist.i++;
+                            hist.list = hist.list.slice(0, hist.i);
+                            hist.list.push(href);
+                        }
+                        if (hist.i > 0) {
+                            document.getElementById("btnBack").style.opacity = "1"
+                        } else {
+                            document.getElementById("btnBack").style.opacity = "0.5"
+                        }
+                        if (hist.i + 1 < hist.list.length) {
+                            document.getElementById("btnForward").style.opacity = "1"
+                        } else {
+                            document.getElementById("btnForward").style.opacity = "0.5"
+                        }
+                    }
+                }
+            });
+        } else {
+            refreshIntervalId = setInterval(sendUrl, 100);
+            setTimeout(function () {
+                clearInterval(refreshIntervalId)
+            }, 30000);
+            document.getElementById("content").style.display = "block";
+            var el = document.getElementById(getURLParam("id") || 'graph0');
+            if (el)
+                if (el.getAttribute('class').indexOf('node') !== -1) {
+                    var bound = el.getBoundingClientRect();
+                    window.scrollTo((bound.left + bound.right) / 2 - document.body.offsetWidth / 2, (bound.top + bound.bottom) / 2 - document.body.offsetHeight / 2);
+                    el.setAttribute('class', el.getAttribute('class') + " on");
+                } else if (el.getAttribute('class').indexOf('graph') !== -1) {
+                    el.parentNode.setAttribute('class', el.parentNode.getAttribute('class') + " on");
+                }
+        }
+        let parser = new DOMParser();
+        for (let e of document.getElementsByTagName('viz')) {
+            let out, digraph = e.getAttribute('digraph'), options = {
+                engine: e.getAttribute('engine') || 'dot',
+                format: "svg"
+            };
+            try {
+                out = parser.parseFromString(Viz(digraph, options), "image/svg+xml").documentElement;
+            } catch (e) {
+                out = document.createElement('div')
+                out.setAttribute('class', 'viz error')
+                out.innerHTML = e.message === undefined ? "An error occurred while processing the graph input." : e.message;
+            }
+            e.appendChild(out);
+        }
+    }
+
+    function getParentOrigin() {
+        try {
+            return parent.window.origin || "null";
+        } catch (exception) {
+            return "null"
+        }
+    }
+
+    function sendUrl() {
+        if (parent_iframe_id !== null && window.location.href !== url) {
+            url = window.location.href;
+            parent.postMessage({
+                id: parent_iframe_id,
+                url: url,
+                action: 'url'
+            }, '*');
+            clearInterval(refreshIntervalId);
+        }
+    }
+
+    var parent_iframe_id = null, url = null, refreshIntervalId;
+    window.addEventListener('message', function (event) {
+        var origin = event.origin === 'file:' ? 'null' : (event.origin || 'null');
+        if (origin === getParentOrigin())
+            if (parent_iframe_id === null && event.data.action === 'id') {
+                parent_iframe_id = event.data.id
+            }
+    });
+</script>
+</body>
+</html>

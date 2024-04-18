@@ -1,25 +1,5 @@
-# Table of Contents
-
-- [Table of Contents](#table-of-contents)
-- [General](#general)
-  - [Dev environment-related useful notes](#dev-environment-related-useful-notes)
-  - [Packaging](#packaging)
-  - [git related useful commands](#git-related-useful-commands)
-- [Applied dataset](#applied-dataset)
-- [Causality package](#causality-package)
-  - [Configuration](#configuration)
-- [Ontology package](#ontology-package)
-- [CO2MPAS sim](#co2mpas-sim)
-- [Test](#test)
-
----
 
 # General
-
-There are two packages:
-
-* Causality with a GUI
-* Ontology with a web
 
 ## Dev environment-related useful notes
 
@@ -59,32 +39,3 @@ Setting up:
 
 * Added as a submodule
 * [https://github.com/FTamas77/dataset](https://github.com/FTamas77/datasethttps:/)
-
----
-
-# Causality package
-
-* Further technical/coding-related notes [dev](./causality/dev.md)
-
-## Configuration
-
-* **Example:** measurement_config.json
-* **Schema:** measurement_config_schema.json
-
----
-
-# Ontology package
-
-* Dev details [here](./ontology/dev.md)
-
----
-
-# CO2MPAS sim
-
-* Dev details [here](./co2mpas/dev.md)
-
----
-
-# Test
-
-* Dev details [here](./test/dev.md)
