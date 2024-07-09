@@ -2,42 +2,44 @@ import os
 from pathlib import Path
 
 import pandas as pd
+import matplotlib
 from matplotlib import pyplot as plt
 
 import causalimpact
 
-ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
-INPUT_DATA_FILE = os.path.join(
-    ROOT_DIR, "datasets", "bubi", "bubi-weather_export_2212-2312.csv"
-)
 
-
-def read_and_filter_dataset(selected_parameters, input_data_file=INPUT_DATA_FILE):
+def read_and_filter_dataset(selected_parameters, input_data_file):
     # selected_parameters: for causal impact it should be only one parameter
     # station_name: if we want to filter on stations
     # ts_0: for resampling
 
     # reading the dataset
-    bubi = pd.read_csv(INPUT_DATA_FILE)
+    bubi = pd.read_csv(input_data_file)
     print(bubi)
 
     return bubi
 
 
-def filter_groups(bubi, selected_parameters):
-    # bubi_intervention -> filter on station_name + add selected parameters + add ts_0
-    # bubi_control -> filter on station_name + add selected parameters + add ts_0
+def filter_groups(
+    bubi,
+    selected_parameters,
+    ts_param,
+    station_prefix_intervention,
+    station_prefix_control,
+):
+    # bubi_intervention -> filter on station_name + add selected parameters + add ts_param
+    # bubi_control -> filter on station_name + add selected parameters + add ts_param
 
     def filter_by_station(station_prefix):
         return bubi.loc[
             bubi.station_name.str.startswith(station_prefix),
-            selected_parameters + ["ts_0"],
+            selected_parameters + [ts_param],
         ]
 
-    bubi_intervention = filter_by_station("0507")
+    bubi_intervention = filter_by_station(station_prefix_intervention)
     print(bubi_intervention)
 
-    bubi_control = filter_by_station("0508")
+    bubi_control = filter_by_station(station_prefix_control)
     print(bubi_control)
 
     return bubi_intervention, bubi_control
@@ -116,52 +118,80 @@ def prepare_data(bubi_intervention, bubi_control, index_column, interest_column)
     return data
 
 
+def plot_prepared_data(prepared_data):
+    if prepared_data.empty:
+        print("The DataFrame is empty. No data to plot.")
+        return
+
+    plt.figure(figsize=(10, 6))
+    for column in prepared_data.columns:
+        plt.plot(prepared_data.index, prepared_data[column], label=column)
+
+    plt.title("Prepared Data Over Time")
+    plt.xlabel("Time")
+    plt.ylabel("Values")
+    plt.legend()
+    plt.show()
+
+
 if __name__ == "__main__":
 
-    selected_parameters_all = [
-        "end_trip_no",
-        "temperature",
-        "max_wind_speed",
-        "start_trip_no",
-        "precipitation",
-    ]
+    # Possible parameters:
+    # "end_trip_no",
+    # "temperature",
+    # "max_wind_speed",
+    # "start_trip_no",
+    # "precipitation",
 
-    selected_parameters__only_end_trip = ["end_trip_no"]
+    ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
+    INPUT_DATA_FILE = os.path.join(
+        ROOT_DIR, "datasets", "bubi", "bubi-weather_export_2212-2312.csv"
+    )
 
-    bubi = read_and_filter_dataset(selected_parameters__only_end_trip, INPUT_DATA_FILE)
+    selected_parameters = ["end_trip_no"]
+    bubi = read_and_filter_dataset(selected_parameters, INPUT_DATA_FILE)
 
+    index_column = "ts_0"
+    station_intervention = "0507"
+    station_control = "0508"
     bubi_intervention, bubi_control = filter_groups(
-        bubi, selected_parameters__only_end_trip
+        bubi,
+        selected_parameters,
+        index_column,
+        station_intervention,
+        station_control,
     )
 
     bubi_intervention, bubi_control = resample_data(bubi_intervention, bubi_control)
 
-    # it is not needed
-    # I used it to have data around the intervention date
+    start_date_filter = "2023-05-01"
+    end_date_filter = "2023-08-01"
     bubi_intervention_filtered, bubi_control_filtered = filter_by_date(
-        bubi_intervention, bubi_control, "2023-05-01", "2023-08-01"
+        bubi_intervention, bubi_control, start_date_filter, end_date_filter
     )
 
-    # plot_data(bubi_intervention, bubi_control, "2023-06-15")
+    # Plot data
+    plot_date = "2023-06-15"
+    plot_data(bubi_intervention, bubi_control, plot_date)
 
-    # prepare data for causal impact
-    index_column = "ts_0"
+    # Prepare data for causal impact analysis
     interest_column = "end_trip_no"
     prepared_data = prepare_data(
         bubi_intervention, bubi_control, index_column, interest_column
     )
     print(prepared_data.head())
 
+    plot_prepared_data(prepared_data)
+
     pre_period = ("2023-05-01", "2023-06-15")
     post_period = ("2023-06-16", "2023-09-01")
 
-    # run causal impact
     impact = causalimpact.fit_causalimpact(
         data=prepared_data, pre_period=pre_period, post_period=post_period
     )
-
-    print(causalimpact.plot(impact))
+    causalimpact.plot(impact)
+    plt.show()
 
     print(causalimpact.summary(impact, output_format="summary"))
-
+    print(causalimpact.summary(impact, output_format="report"))
     print("end")
