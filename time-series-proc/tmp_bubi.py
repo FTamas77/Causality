@@ -134,6 +134,57 @@ def plot_prepared_data(prepared_data):
     plt.show()
 
 
+def manual_plot(
+    impact, intervention_start_date, file_name="manual_causal_impact_plot.png"
+):
+    plt.figure(figsize=(10, 6))
+    plt.plot(impact.series.index, impact.series["observed"], label="Observed")
+    plt.plot(impact.series.index, impact.series["posterior_mean"], label="Predicted")
+    plt.fill_between(
+        impact.series.index,
+        impact.series["posterior_lower"],
+        impact.series["posterior_upper"],
+        color="gray",
+        alpha=0.2,
+    )
+    plt.axvline(
+        x=pd.to_datetime(intervention_start_date),
+        color="red",
+        linestyle="--",
+        label="Intervention",
+    )
+    plt.xlabel("Date")
+    plt.ylabel("End Trip Number")
+    plt.title("Causal Impact Analysis")
+    plt.legend()
+    plt.savefig(file_name)
+    plt.show()
+
+
+def manual_plot(impact, intervention_start_date):
+    plt.figure(figsize=(10, 6))
+    plt.plot(impact.series.index, impact.series["observed"], label="Observed")
+    plt.plot(impact.series.index, impact.series["posterior_mean"], label="Predicted")
+    plt.fill_between(
+        impact.series.index,
+        impact.series["posterior_lower"],
+        impact.series["posterior_upper"],
+        color="gray",
+        alpha=0.2,
+    )
+    plt.axvline(
+        x=pd.to_datetime(intervention_start_date),
+        color="red",
+        linestyle="--",
+        label="Intervention",
+    )
+    plt.xlabel("Date")
+    plt.ylabel("End Trip Number")
+    plt.title("Causal Impact Analysis")
+    plt.legend()
+    plt.show()
+
+
 if __name__ == "__main__":
 
     # Possible parameters:
@@ -189,9 +240,15 @@ if __name__ == "__main__":
     impact = causalimpact.fit_causalimpact(
         data=prepared_data, pre_period=pre_period, post_period=post_period
     )
+
+    # FIXME: https://github.com/google/tfp-causalimpact/issues/36
     causalimpact.plot(impact)
     plt.show()
 
     print(causalimpact.summary(impact, output_format="summary"))
     print(causalimpact.summary(impact, output_format="report"))
+
+    # Manual Plot using the function
+    manual_plot(impact, intervention_start_date="2023-06-16")
+
     print("end")
