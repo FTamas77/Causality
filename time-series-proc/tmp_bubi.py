@@ -242,13 +242,24 @@ if __name__ == "__main__":
     )
 
     # FIXME: https://github.com/google/tfp-causalimpact/issues/36
-    causalimpact.plot(impact)
+    chart = causalimpact.plot(impact)
+    script_dir = os.path.dirname(__file__)
+    full_file_path = os.path.join(script_dir, "causal_impact_plot.html")
+    chart.save(full_file_path)
     plt.show()
 
+    # OR DO THIS:
+    # fig = causalimpact.plot(
+    #    impact, backend="matplotlib", chart_width=1000, chart_height=200
+    # )
+    # fig.save("causal_impact_plot.png")
+    # plt.show()
+
+    # Further logs
     print(causalimpact.summary(impact, output_format="summary"))
     print(causalimpact.summary(impact, output_format="report"))
 
     # Manual Plot using the function
-    manual_plot(impact, intervention_start_date="2023-06-16")
+    # manual_plot(impact, intervention_start_date="2023-06-16")
 
     print("end")
