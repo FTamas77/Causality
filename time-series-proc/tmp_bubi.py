@@ -8,6 +8,11 @@ from matplotlib import pyplot as plt
 import causalimpact
 
 
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+import statsmodels.formula.api as smf
+
+
 def read_and_filter_dataset(selected_parameters, input_data_file):
     # selected_parameters: for causal impact it should be only one parameter
     # station_name: if we want to filter on stations
@@ -185,6 +190,71 @@ def manual_plot(impact, intervention_start_date):
     plt.show()
 
 
+def perform_did_analysis(bubi_intervention, bubi_control, intervention_start_date):
+    # Combine intervention and control DataFrames
+    combined_df = pd.concat(
+        [bubi_intervention, bubi_control], keys=["intervention", "control"]
+    )
+
+    # Reset the index to make 'ts_0' a column
+    combined_df.reset_index(level=1, inplace=True)
+
+    # Print the first few rows to inspect the DataFrame
+    print("Combined DataFrame Preview:")
+    print(combined_df.head())
+
+    # Print the columns to check if 'ts_0' is present
+    print("Columns in Combined DataFrame:")
+    print(combined_df.columns)
+
+    # Convert 'ts_0' to datetime if it's not already
+    combined_df["ts_0"] = pd.to_datetime(combined_df["ts_0"])
+
+    # Check if conversion to datetime was successful
+    print("Data Types After Conversion:")
+    print(combined_df.dtypes)
+
+    # Add 'post' column
+    combined_df["post"] = combined_df["ts_0"] >= pd.to_datetime(intervention_start_date)
+
+    # Add 'intervention' column to indicate intervention group
+    combined_df["intervention"] = (
+        combined_df.index.get_level_values(0) == "intervention"
+    )
+
+    # Fit the DiD model
+    formula = "end_trip_no ~ post * intervention"
+    did_model = smf.ols(formula, data=combined_df).fit()
+
+    # Print the summary of the model
+    print(did_model.summary())
+
+    return combined_df, did_model
+
+
+def plot_did_results(combined_df, intervention_start_date):
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Use 'intervention' and 'post' columns for grouping
+    for key, grp in combined_df.groupby(["intervention", "post"]):
+        label = f"Intervention: {key[0]}, Post: {key[1]}"
+        ax.plot(grp["ts_0"], grp["end_trip_no"], label=label)
+
+    # Add a vertical line for the intervention start date
+    plt.axvline(
+        x=pd.to_datetime(intervention_start_date),
+        color="red",
+        linestyle="--",
+        label="Intervention",
+    )
+
+    plt.title("Difference-in-Differences Analysis")
+    plt.xlabel("Date")
+    plt.ylabel("End Trip Number")
+    plt.legend()
+    plt.show()
+
+
 if __name__ == "__main__":
 
     # Possible parameters:
@@ -261,5 +331,11 @@ if __name__ == "__main__":
 
     # Manual Plot using the function
     # manual_plot(impact, intervention_start_date="2023-06-16")
+
+    # DiD Analysis
+    combined_df, did_model = perform_did_analysis(
+        bubi_intervention_filtered, bubi_control_filtered, plot_date
+    )
+    plot_did_results(combined_df, plot_date)
 
     print("end")
