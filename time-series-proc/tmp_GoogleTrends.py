@@ -152,10 +152,11 @@ def plot_prepared_data(prepared_data):
     plt.show()
 
 
-def perform_did_analysis(bubi_intervention, bubi_control, intervention_start_date):
+def perform_did_analysis(intervention_data, control_data, intervention_start_date):
+
     # Combine intervention and control DataFrames
     combined_df = pd.concat(
-        [bubi_intervention, bubi_control], keys=["intervention", "control"]
+        [intervention_data, control_data], keys=["intervention", "control"]
     )
 
     combined_df.reset_index(level=1, inplace=True)
@@ -166,9 +167,6 @@ def perform_did_analysis(bubi_intervention, bubi_control, intervention_start_dat
 
     print("Columns in Combined DataFrame:")
     print(combined_df.columns)
-
-    # Convert 'ts_0' to datetime if it's not already
-    # combined_df["Month"] = pd.to_datetime(combined_df["Month"])
 
     # Check if conversion to datetime was successful
     print("Data Types After Conversion:")
