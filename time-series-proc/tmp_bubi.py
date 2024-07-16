@@ -29,22 +29,24 @@ def filter_groups(
     bubi,
     selected_parameters,
     ts_param,
-    station_prefix_intervention,
-    station_prefix_control,
+    station_prefixes_intervention,
+    station_prefixes_control,
 ):
     # bubi_intervention -> filter on station_name + add selected parameters + add ts_param
     # bubi_control -> filter on station_name + add selected parameters + add ts_param
 
-    def filter_by_station(station_prefix):
+    def filter_by_stations(station_prefixes):
         return bubi.loc[
-            bubi.station_name.str.startswith(station_prefix),
+            bubi.station_name.apply(
+                lambda name: any(name.startswith(prefix) for prefix in station_prefixes)
+            ),
             selected_parameters + [ts_param],
         ]
 
-    bubi_intervention = filter_by_station(station_prefix_intervention)
+    bubi_intervention = filter_by_stations(station_prefixes_intervention)
     print(bubi_intervention)
 
-    bubi_control = filter_by_station(station_prefix_control)
+    bubi_control = filter_by_stations(station_prefixes_control)
     print(bubi_control)
 
     return bubi_intervention, bubi_control
@@ -273,8 +275,8 @@ if __name__ == "__main__":
     bubi = read_and_filter_dataset(selected_parameters, INPUT_DATA_FILE)
 
     index_column = "ts_0"
-    station_intervention = "0507"
-    station_control = "0508"
+    station_intervention = ["0507", "0103"]
+    station_control = ["1108", "1115", "1118"]
     bubi_intervention, bubi_control = filter_groups(
         bubi,
         selected_parameters,
@@ -311,6 +313,8 @@ if __name__ == "__main__":
         data=prepared_data, pre_period=pre_period, post_period=post_period
     )
 
+    print(" ---------------- Causal Impact Analysis ---------------- ")
+
     # FIXME: https://github.com/google/tfp-causalimpact/issues/36
     chart = causalimpact.plot(impact)
     script_dir = os.path.dirname(__file__)
@@ -331,6 +335,8 @@ if __name__ == "__main__":
 
     # Manual Plot using the function
     # manual_plot(impact, intervention_start_date="2023-06-16")
+
+    print(" ---------------- DiD Analysis ---------------- ")
 
     # DiD Analysis
     combined_df, did_model = perform_did_analysis(
