@@ -1,15 +1,12 @@
 import os
 from pathlib import Path
-
 import pandas as pd
-import matplotlib
-from matplotlib import pyplot as plt
-
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.formula.api import ols
 import causalimpact
 
-
+import matplotlib.pyplot as plt
 import statsmodels.api as sm
-from statsmodels.formula.api import ols
 import statsmodels.formula.api as smf
 
 
@@ -54,6 +51,18 @@ def read_and_filter_datasets(intervention_file, control_file, selected_parameter
     print(control_data)
 
     return intervention_data, control_data
+
+
+def normalize_column(dataframe, column_name, population_dict, country_key):
+    # Extract population for the given country key from the population dictionary
+    population = population_dict["population"][
+        population_dict["country"].index(country_key)
+    ]
+
+    # Normalize the specified column by the population
+    dataframe[column_name] = dataframe[column_name] / population
+
+    return dataframe
 
 
 def plot_data(intervention_data, control_data, intervention_start_date):
@@ -229,6 +238,17 @@ if __name__ == "__main__":
     intervention_data, control_data = read_and_filter_datasets(
         intervention_file, control_file, selected_parameters
     )
+
+    population = {
+        "country": ["intervention_data", "control_data"],
+        "population": [83000000, 331000000],
+    }
+
+    # Normalize the 'Number' column for both datasets
+    intervention_data = normalize_column(
+        intervention_data, "Number", population, "intervention_data"
+    )
+    control_data = normalize_column(control_data, "Number", population, "control_data")
 
     # Define the intervention start date
     intervention_start_date = "2015-06-01"
