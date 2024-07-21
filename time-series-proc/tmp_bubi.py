@@ -12,6 +12,8 @@ import statsmodels.api as sm
 from statsmodels.formula.api import ols
 import statsmodels.formula.api as smf
 
+import tmp_bubi_days
+
 
 def read_and_filter_dataset(selected_parameters, input_data_file):
     # selected_parameters: for causal impact it should be only one parameter
@@ -82,7 +84,23 @@ def filter_by_date(bubi_intervention, bubi_control, start_date, end_date):
     return bubi_intervention_filtered, bubi_control_filtered
 
 
-def plot_data(intervention_data, control_data, intervention_start_date):
+def plot_data(
+    intervention_data,
+    control_data,
+    intervention_start_date,
+    start_date_filter,
+    end_date_filter,
+):
+    # Filter the data based on the provided start and end date filters
+    intervention_data = intervention_data[
+        (intervention_data.index >= start_date_filter)
+        & (intervention_data.index <= end_date_filter)
+    ]
+    control_data = control_data[
+        (control_data.index >= start_date_filter)
+        & (control_data.index <= end_date_filter)
+    ]
+
     ax = intervention_data.plot(color="blue", label="Intervention")
     control_data.plot(ax=ax, linestyle="dotted", color="green", label="Control")
 
@@ -125,10 +143,16 @@ def prepare_data(bubi_intervention, bubi_control, index_column, interest_column)
     return data
 
 
-def plot_prepared_data(prepared_data):
+def plot_prepared_data(prepared_data, start_date_filter, end_date_filter):
     if prepared_data.empty:
         print("The DataFrame is empty. No data to plot.")
         return
+
+    # Filter the DataFrame for the specified date range
+    prepared_data = prepared_data[
+        (prepared_data.index >= start_date_filter)
+        & (prepared_data.index <= end_date_filter)
+    ]
 
     plt.figure(figsize=(10, 6))
     for column in prepared_data.columns:
@@ -259,16 +283,20 @@ def plot_did_results(combined_df, intervention_start_date):
 
 if __name__ == "__main__":
 
-    # Possible parameters:
+    # Parameters:
     # "end_trip_no",
     # "temperature",
     # "max_wind_speed",
     # "start_trip_no",
     # "precipitation",
 
+    # Sources:
+    # bubi-weather_export_2212-2312.csv
+    # LARGE_bubi-weather_export_2206-2406.csv
+
     ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent
     INPUT_DATA_FILE = os.path.join(
-        ROOT_DIR, "datasets", "bubi", "bubi-weather_export_2212-2312.csv"
+        ROOT_DIR, "datasets", "bubi", "LARGE_bubi-weather_export_2206-2406.csv"
     )
 
     selected_parameters = ["end_trip_no"]
@@ -276,7 +304,7 @@ if __name__ == "__main__":
 
     index_column = "ts_0"
     station_intervention = ["0507", "0103"]
-    station_control = ["1108", "1115", "1118"]
+    station_control = ["0515", "1101"]
     bubi_intervention, bubi_control = filter_groups(
         bubi,
         selected_parameters,
@@ -295,7 +323,9 @@ if __name__ == "__main__":
 
     # Plot data
     plot_date = "2023-06-15"
-    plot_data(bubi_intervention, bubi_control, plot_date)
+    plot_data(
+        bubi_intervention, bubi_control, plot_date, start_date_filter, end_date_filter
+    )
 
     # Prepare data for causal impact analysis
     interest_column = "end_trip_no"
@@ -304,7 +334,7 @@ if __name__ == "__main__":
     )
     print(prepared_data.head())
 
-    plot_prepared_data(prepared_data)
+    # plot_prepared_data(prepared_data, start_date_filter, end_date_filter)
 
     pre_period = ("2023-05-01", "2023-06-15")
     post_period = ("2023-06-16", "2023-09-01")
