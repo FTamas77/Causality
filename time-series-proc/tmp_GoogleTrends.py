@@ -241,7 +241,7 @@ if __name__ == "__main__":
 
     population = {
         "country": ["intervention_data", "control_data"],
-        "population": [83000000, 331000000],
+        "population": [1, 4],
     }
 
     # Normalize the 'Number' column for both datasets
